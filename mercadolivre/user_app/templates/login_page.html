@@ -1,0 +1,26 @@
+{% extends 'base.html' %}
+{% load static %}
+
+
+{% block head %}
+<link rel="stylesheet" href="{% static 'user_app/login_page.css' %}">
+{% endblock %}
+
+
+{% block headbar %}
+<li><a href="/index/">Home</a></li>
+<li><a href="/user/login/" class='active'>Login</a></li>
+{% endblock %}
+
+
+{% block content %}
+<h1>Login</h1>
+<div class="login_form">
+    <form method='POST'>
+        {{ form }}
+        {% csrf_token %}
+        <input type="submit" value="Entrar">
+    </form>
+</div>
+<a href="/user/signin">Signin</a>
+{% endblock %}
