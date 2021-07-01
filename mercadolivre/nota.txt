@@ -5,4 +5,4 @@ Houve a tentativa de fazer um login com um novo app (user_app) adicionando model
 o que impossibilita de corrigir o problema automáticamente, teria que ser feito correção manual no banco de dados.
 
 
-solução (exclui tudo e migrei novamente)
+solução: como não tinha nenhum conteúdo no banco exclui tudo e migrei novamente.
