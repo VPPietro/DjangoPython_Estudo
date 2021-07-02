@@ -30,3 +30,6 @@ def signin_view(request):
     else:
         form = SignInForm()
     return render(request, 'signin_page.html', {'form': form})
+
+def logoff_view(request):
+    return render(request, 'logoff_page.html')

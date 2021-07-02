@@ -1,17 +1,11 @@
 {% extends 'base.html' %}
 {% load static %}
 
-
 {% block head %}
 <link rel="stylesheet" href="{% static 'user_app/login_page.css' %}">
 {% endblock %}
 
-
-{% block headbar %}
-<li><a href="/index/">Home</a></li>
-<li><a href="/user/login/" class='active'>Login</a></li>
-{% endblock %}
-
+{% block title %}Login{% endblock %}
 
 {% block content %}
 <h1>Login</h1>
