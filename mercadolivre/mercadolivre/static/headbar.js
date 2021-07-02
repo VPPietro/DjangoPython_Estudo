@@ -8,13 +8,13 @@ document.getElementById('usuario').innerHTML = ""
 if (usuario == 'AnonymousUser'){
     document.getElementById('list').innerHTML = 
         '<li id="index"><a href="/index/">Home</a></li>'+
-        '<li id="login"><a href="/user/login/">Login</a></li>'+
-        '<li id="signin"><a href="/user/signin/">Sign In</a></li>'
+        '<li class="LoginOut" id="login"><a href="/user/login/">Login</a></li>'+
+        '<li class="LoginOut" id="signin"><a href="/user/signin/">Sign In</a></li>'
     console.log(usuario)
     pagina = document.getElementById('title').innerText
     if (pagina === 'Home'){
         document.getElementById('index').innerHTML = 
-        '<a href="/index/" id="index" class="active">Home</a>'
+        '<a href="/index/" class="active">Home</a>'
     }
     else if (pagina === 'Login'){
         document.getElementById('login').innerHTML =
@@ -31,7 +31,7 @@ if (usuario == 'AnonymousUser'){
 else{
     document.getElementById('list').innerHTML=
         '<li><a href="/index/" id="index">Home</a></li>'+
-        '<li><a href="/user/logoff">Logout</a></li>' +
-        '<li><a href="/index/" id="UserLogado">Logado como: '+ usuario +'</a></li>'
+        '<li class="LoginOut"><a href="/user/logoff">Logout</a></li>' +
+        '<li class="LoginOut"><a href="/index/">Logado como: '+ usuario +'</a></li>'
         console.log(page + " " + usuario)
 }

@@ -18,8 +18,7 @@ li a {
   text-decoration: none;
 }
   
-#UserLogado{
-  display: block;
+.LoginOut{
   float: right;
 }
 
