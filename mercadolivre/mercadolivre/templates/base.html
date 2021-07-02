@@ -14,12 +14,8 @@
 </head>
 
 <body>
-        <div id="usuario"> {{ usuario }} </div>
-        <ul>
-            <div id="list"></div>
-            <li><a href="/index/">Home</a></li>
-            <li><a href="/user/login">Login</a></li>
-            <li><a href="/user/signin">Sign in</a></li>
+        <div id="usuario">{{ usuario }}</div>
+        <ul id="list">
             <script type="text/javascript" src="{% static 'headbar.js' %}"></script>
         </ul>
 
@@ -28,6 +24,5 @@
 
         {% endblock %}
     </div>
-    
 </body>
 </html>
