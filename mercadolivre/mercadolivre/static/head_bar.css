@@ -1,4 +1,4 @@
-ul {
+#list {
   list-style-type: none;
   margin: 0;
   padding: 0;
@@ -6,11 +6,11 @@ ul {
   background-color: #fdee64;
 }
 
-li {
+#list li {
   float: left;
 }
 
-li a {
+#list li a {
   display: block;
   color: rgb(0, 0, 0);
   text-align: center;
@@ -18,24 +18,19 @@ li a {
   text-decoration: none;
 }
   
-.LoginOut{
+#list .LoginOut{
   float: right;
 }
 
-a #login{
-  float: right;
-}
-
-/* Change the link color to #111 (black) on hover */
-li a:hover {
+#list li a:hover {
   background-color: rgb(255, 250, 183);
   color: rgb(34, 34, 34);
 }
 
-.active {
+#list li .active {
   background-color: rgb(238, 229, 150);
 }
 
-.active:hover{
+#list li .active:hover{
   background-color: #b9aa80;
 }
