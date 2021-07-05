@@ -1,6 +1,7 @@
 from django.shortcuts import redirect, render
 from .forms import SignInForm, LoginForm
 from django.contrib.auth import authenticate, get_user, login, logout
+from django.contrib.auth.models import User
 
 
 def login_view(request):
@@ -37,3 +38,9 @@ def logoff_view(request):
     usuario = get_user(request)
     logout(request)
     return render(request, 'logoff_page.html', {'usuario': usuario})
+
+def user_view(request):
+    usuario = get_user(request)
+    if usuario.is_anonymous:
+        return redirect('/user/login')
+    return render(request, 'user_page.html', {'usuario': usuario, 'nome': 'nome', 'email': 'email'})

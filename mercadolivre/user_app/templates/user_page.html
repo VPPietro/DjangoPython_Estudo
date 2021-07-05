@@ -1,0 +1,17 @@
+{% extends 'base.html' %}
+{% load static %}
+
+
+{% block head %}
+<link rel="stylesheet" href="{% static 'user_app/user_page.css' %}">
+{% endblock %}
+
+
+{% block content %}
+<h1>User info</h1>
+
+<ul>
+    <li>nome: {{ nome }}</li>
+    <li>email: {{ email }}</li>
+</ul>
+{% endblock %}

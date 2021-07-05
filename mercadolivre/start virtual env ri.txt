@@ -1,1 +1,1 @@
-"Z:\rendeer\Drive Pildo\udemy\virtual_enviroment\MyDjangoEnv\Scripts\acivate"
+"Z:\rendeer\Drive Pildo\udemy\virtual_enviroment\MyDjangoEnv\Scripts\activate"

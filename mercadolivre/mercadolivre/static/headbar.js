@@ -9,7 +9,8 @@ if (usuario == 'AnonymousUser'){
     document.getElementById('list').innerHTML = 
         '<li id="index"><a href="/index/">Home</a></li>'+
         '<li class="LoginOut" id="login"><a href="/user/login/">Login</a></li>'+
-        '<li class="LoginOut" id="signin"><a href="/user/signin/">Sign In</a></li>'
+        '<li class="LoginOut" id="signin"><a href="/user/signin/">Sign In</a></li>' +
+        '<li id="userinfo"><a href="/user/info">User info temp</a></li>'
     console.log(usuario)
     pagina = document.getElementById('title').innerText
     if (pagina === 'Home'){
@@ -32,6 +33,7 @@ else{
     document.getElementById('list').innerHTML=
         '<li><a href="/index/" id="index">Home</a></li>'+
         '<li class="LoginOut"><a href="/user/logoff">Logout</a></li>' +
-        '<li class="LoginOut"><a href="/index/">Logado como: '+ usuario +'</a></li>'
+        '<li class="LoginOut"><a href="/user/info">Logado como: '+ usuario +'</a></li>'+
+        '<li id="userinfo"><a href="/user/info">User info temp</a></li>'
         console.log(page + " " + usuario)
 }
