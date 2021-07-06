@@ -11,8 +11,11 @@
 {% block content %}
 <h1>User info</h1>
 
-<ul>
-    <li>nome: {{ nome }}</li>
-    <li>email: {{ email }}</li>
+<ul id="userinfolist">
+    <li><strong>Nome completo:</strong> {{ nome }}</li>
+    <li><strong>E-mail:</strong> {{ email }}</li>
+    <li><strong>Data de cadastro:</strong> {{ data_cadastro }}</li>
+    <li><strong>Último login:</strong> {{ ultimo_login }}</li>
+    <li><strong>Senha:</strong> {{ senha }}</li>
 </ul>
 {% endblock %}

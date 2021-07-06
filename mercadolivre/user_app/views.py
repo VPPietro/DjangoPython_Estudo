@@ -39,12 +39,19 @@ def logoff_view(request):
     logout(request)
     return render(request, 'logoff_page.html', {'usuario': usuario})
 
-def user_view(request):
+def userinfo_view(request):
     usuario = get_user(request)
     if usuario.is_anonymous:
         return redirect('/user/login')
-
     nome = usuario.get_full_name()
-    email = User.objects.filter(username=usuario).get('email')
-    return render(request, 'user_page.html', {'usuario': usuario, 'nome': nome, 'email': email})
-
+    email = User.objects.filter(username=usuario).values('email')[0]['email']
+    data_cadastro = User.objects.filter(username=usuario).values('date_joined')[0]['date_joined']
+    ultimo_login = User.objects.filter(username=usuario).values('last_login')[0]['last_login']
+    return render(request, 'user_page.html', 
+        {'usuario': usuario,
+         'nome': nome, 
+         'email': email,
+         'data_cadastro': data_cadastro,
+         'senha': '*******',
+         'ultimo_login': ultimo_login,
+         })
