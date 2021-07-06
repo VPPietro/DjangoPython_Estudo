@@ -43,5 +43,6 @@ def user_view(request):
     usuario = get_user(request)
     if usuario.is_anonymous:
         return redirect('/user/login')
-    
-    return render(request, 'user_page.html', {'usuario': usuario, 'nome': 'nome', 'email': 'email'})
+    nome = usuario.get_full_name()
+    email = User.objects.filter(username=usuario).get('email')
+    return render(request, 'user_page.html', {'usuario': usuario, 'nome': nome, 'email': email})
