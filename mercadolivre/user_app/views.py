@@ -16,7 +16,7 @@ def login_view(request):
                 login(request, user)
                 return redirect('/')
             else:
-                print('login user dosent existis/invalid')
+                print('login user dosent existis/invalid') # definir retorno de usuario inexistente na pag.
     return render(request, 'login_page.html', {'form': form, 'usuario': usuario})
 
 def signin_view(request):
@@ -39,7 +39,7 @@ def logoff_view(request):
     logout(request)
     return render(request, 'logoff_page.html', {'usuario': usuario})
 
-def userinfo_view(request):
+def user_info_view(request):
     usuario = get_user(request)
     if usuario.is_anonymous:
         return redirect('/user/login')
@@ -49,9 +49,13 @@ def userinfo_view(request):
     ultimo_login = User.objects.filter(username=usuario).values('last_login')[0]['last_login']
     return render(request, 'user_page.html', 
         {'usuario': usuario,
-         'nome': nome, 
+         'nome': nome.title(), 
          'email': email,
          'data_cadastro': data_cadastro,
          'senha': '*******',
          'ultimo_login': ultimo_login,
          })
+
+def alter_user_info_view(request):
+    usuario = get_user(request)
+    return render(request, 'alter_user_page.html', {'usuario': usuario})
