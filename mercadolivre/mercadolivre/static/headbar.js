@@ -5,7 +5,6 @@ document.getElementById('usuario').innerHTML = ""
 
 
 function activate_page(pagina){
-    console.log(pagina)
     if (pagina === '/index/' || pagina === '/'){
         document.querySelector('#index').querySelector('a').setAttribute('class', 'active')
     }

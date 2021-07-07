@@ -1,13 +1,15 @@
-const nomeButton = document.querySelector('#nome').querySelector('input')
+const nomeButton = document.querySelector('#nomeBtn')
+const nomeLi = document.querySelector('#nome')
 
 nomeButton.addEventListener('click', abreFormularioNome)
 
 function abreFormularioNome(){
-    console.log(nomeButton.querySelector('input'))
-    // if (nomeButton.querySelector('button') === ''){
-    document.getElementById('nome').innerHTML = 
-    '<strong>Nome completo:</strong>' +
-    '<input type="text"></input>' +
-    '<input type="button" value="Salvar"></input>'
-    
+    if (nomeButton.value === 'Alterar'){
+        document.getElementById('teste').innerHTML = 
+        document.getElementById('teste2').innerHTML +
+        '<input type="submit">'
+    }
+    else if (nomeButton.value === 'Cancelar'){
+        
+    }
 }

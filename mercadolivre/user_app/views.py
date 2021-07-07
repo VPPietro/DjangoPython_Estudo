@@ -59,8 +59,6 @@ def alter_user_info_view(request):
     usuario = get_user(request)
     nome = usuario.get_full_name()
     email = User.objects.filter(username=usuario).values('email')[0]['email']
-    data_cadastro = User.objects.filter(username=usuario).values('date_joined')[0]['date_joined']
-    ultimo_login = User.objects.filter(username=usuario).values('last_login')[0]['last_login']
     return render(request, 'alter_user_page.html', 
         {'usuario': usuario,
          'nome': nome.title(), 

@@ -1,6 +1,7 @@
 {% extends 'base.html' %}
 {% load static %}
 
+
 {% block title %}Alterar cadastro{% endblock %}
 
 {% block head %}
@@ -15,9 +16,16 @@
     <li>
         <strong>Usuário:</strong> {{ usuario }}
     </li>
-    <li id="nome">
-        <strong>Nome completo:</strong> {{ nome }}
-        <input type="button" value="Alterar"></input>
+    <li>
+        <div id='teste2'>
+            {% csrf_token %}
+        </div>
+        <div id="nome">
+            <strong>Nome completo:</strong> {{ nome }}
+            <form method="POST" id="teste">
+            </form>
+        </div>
+        <input type="button" value="Alterar" id="nomeBtn"></input>
     </li>
     <li>
         <strong>E-mail:</strong> {{ email }}
@@ -28,5 +36,6 @@
         <input type="button" value="Alterar" id="senha"></input>
     </li>
 </ul>
+
 <script type="text/javascript" src="{% static 'user_app/alter_user_page.js' %}"></script>
 {% endblock %}
