@@ -35,9 +35,8 @@ def signin_view(request):
     return render(request, 'signin_page.html', {'form': form, 'usuario': usuario})
 
 def logoff_view(request):
-    usuario = get_user(request)
     logout(request)
-    return render(request, 'logoff_page.html', {'usuario': usuario})
+    return redirect('/index/')
 
 def user_info_view(request):
     usuario = get_user(request)
@@ -58,4 +57,13 @@ def user_info_view(request):
 
 def alter_user_info_view(request):
     usuario = get_user(request)
-    return render(request, 'alter_user_page.html', {'usuario': usuario})
+    nome = usuario.get_full_name()
+    email = User.objects.filter(username=usuario).values('email')[0]['email']
+    data_cadastro = User.objects.filter(username=usuario).values('date_joined')[0]['date_joined']
+    ultimo_login = User.objects.filter(username=usuario).values('last_login')[0]['last_login']
+    return render(request, 'alter_user_page.html', 
+        {'usuario': usuario,
+         'nome': nome.title(), 
+         'email': email,
+         'senha': '*******',
+         })
