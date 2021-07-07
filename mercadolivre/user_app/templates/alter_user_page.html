@@ -1,14 +1,32 @@
 {% extends 'base.html' %}
 {% load static %}
 
-{% block title %}Alterar informações{% endblock %}
-
+{% block title %}Alterar cadastro{% endblock %}
 
 {% block head %}
-<link rel="stylesheet" href="{% static 'user_app/alter_user_page.css' %}">
+<link rel="stylesheet" href="{% static 'user_app/user_page.css' %}">
 {% endblock %}
 
 
 {% block content %}
-<h1>Alterar informações do usuário</h1>
+<h1>Alterar cadastro</h1>
+
+<ul id="userinfolist">
+    <li>
+        <strong>Usuário:</strong> {{ usuario }}
+    </li>
+    <li id="nome">
+        <strong>Nome completo:</strong> {{ nome }}
+        <input type="button" value="Alterar"></input>
+    </li>
+    <li>
+        <strong>E-mail:</strong> {{ email }}
+        <input type="button" value="Alterar" id="email"></input>
+    </li>
+    <li>
+        <strong>Senha:</strong> {{ senha }}
+        <input type="button" value="Alterar" id="senha"></input>
+    </li>
+</ul>
+<script type="text/javascript" src="{% static 'user_app/alter_user_page.js' %}"></script>
 {% endblock %}
