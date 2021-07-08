@@ -13,28 +13,15 @@
 <h1>Alterar cadastro</h1>
 
 <ul id="userinfolist">
-    <li>
-        <strong>Usuário:</strong> {{ usuario }}
-    </li>
-    <li>
-        <div id='teste2'>
-            {% csrf_token %}
-        </div>
-        <div id="nome">
-            <strong>Nome completo:</strong> {{ nome }}
-            <form method="POST" id="teste">
-            </form>
-        </div>
-        <input type="button" value="Alterar" id="nomeBtn"></input>
-    </li>
-    <li>
-        <strong>E-mail:</strong> {{ email }}
-        <input type="button" value="Alterar" id="email"></input>
-    </li>
-    <li>
-        <strong>Senha:</strong> {{ senha }}
-        <input type="button" value="Alterar" id="senha"></input>
-    </li>
+    <form method="POST">
+        {% for x in form %}
+        <li>
+            {{x}}
+        </li>
+        {% endfor %}
+        {% csrf_token %}
+        <input type="submit" value="enviar">
+    </form>
 </ul>
 
 <script type="text/javascript" src="{% static 'user_app/alter_user_page.js' %}"></script>

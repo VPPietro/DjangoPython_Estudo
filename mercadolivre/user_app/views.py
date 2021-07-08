@@ -1,5 +1,5 @@
 from django.shortcuts import redirect, render
-from .forms import SignInForm, LoginForm
+from .forms import AlterUserForm, SignInForm, LoginForm
 from django.contrib.auth import authenticate, get_user, login, logout
 from django.contrib.auth.models import User
 
@@ -57,11 +57,20 @@ def user_info_view(request):
 
 def alter_user_info_view(request):
     usuario = get_user(request)
-    nome = usuario.get_full_name()
+    nome = usuario.get_short_name()
+    sobrenome = usuario.get_full_name()
     email = User.objects.filter(username=usuario).values('email')[0]['email']
+    form = AlterUserForm(initial={'nome': nome, 'senha': 'testesenha', 'email': email})
+    if request.method == 'POST':
+        form = AlterUserForm(request.POST)
+        if form.is_valid():
+            login_user = authenticate(request, username=usuario.get_username(), password=form['senha'].value())
+            if login_user is not None:
+                login_user.save() # não funciona para salvar as alterações
     return render(request, 'alter_user_page.html', 
         {'usuario': usuario,
-         'nome': nome.title(), 
+         'nome': nome.title(),
+         'sobrenome': sobrenome.title(),
          'email': email,
-         'senha': '*******',
+         'form': form,
          })

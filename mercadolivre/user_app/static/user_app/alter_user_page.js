@@ -1,15 +1,9 @@
-const nomeButton = document.querySelector('#nomeBtn')
-const nomeLi = document.querySelector('#nome')
+const nome = document.querySelector('#id_nome');
+const email = document.querySelector('#id_email');
+const senha = document.querySelector('#id_senha')
 
-nomeButton.addEventListener('click', abreFormularioNome)
 
-function abreFormularioNome(){
-    if (nomeButton.value === 'Alterar'){
-        document.getElementById('teste').innerHTML = 
-        document.getElementById('teste2').innerHTML +
-        '<input type="submit">'
-    }
-    else if (nomeButton.value === 'Cancelar'){
-        
-    }
-}
+nome.insertAdjacentHTML('beforebegin', '<strong>Nome: </strong>')
+email.insertAdjacentHTML('beforebegin', '<strong>E-mail: </strong>')
+senha.insertAdjacentHTML('beforebegin', '<strong>Confirme a senha: </strong>')
+
