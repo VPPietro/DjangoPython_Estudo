@@ -61,16 +61,21 @@ def alter_user_info_view(request):
     sobrenome = usuario.get_full_name()
     email = User.objects.filter(username=usuario).values('email')[0]['email']
     form = AlterUserForm(initial={'nome': nome, 'senha': 'testesenha', 'email': email})
+    login_erro = False
     if request.method == 'POST':
         form = AlterUserForm(request.POST)
         if form.is_valid():
             login_user = authenticate(request, username=usuario.get_username(), password=form['senha'].value())
+            print(login_user)
             if login_user is not None:
                 login_user.save() # não funciona para salvar as alterações
+            else:
+                login_erro = True
     return render(request, 'alter_user_page.html', 
         {'usuario': usuario,
          'nome': nome.title(),
          'sobrenome': sobrenome.title(),
          'email': email,
          'form': form,
+         'login_erro': login_erro,
          })
