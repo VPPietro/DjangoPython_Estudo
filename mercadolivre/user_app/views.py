@@ -1,8 +1,15 @@
+from django.contrib.auth import authenticate, login, logout, get_user
 from django.shortcuts import redirect, render
-from .forms import AlterUserForm, SignInForm, LoginForm
-from django.contrib.auth import authenticate, get_user, login, logout
-from django.contrib.auth.models import User
+from .forms import AlterUserForm, SignUpForm, LoginForm
+from .models import UserModel
+from django.views.generic.detail import DetailView
 
+class UserView(DetailView):
+
+    template_name = 'sigin_page.html'
+
+    def get_object(self):
+        return self.request.user
 
 def login_view(request):
     form = LoginForm()
@@ -19,63 +26,32 @@ def login_view(request):
                 print('login user dosent existis/invalid') # definir retorno de usuario inexistente na pag.
     return render(request, 'login_page.html', {'form': form, 'usuario': usuario})
 
-def signin_view(request):
+def signup(request):
     usuario = get_user(request)
     if request.method == 'POST':
-        form = SignInForm(request.POST)
+        form = SignUpForm(request.POST)
         if form.is_valid():
-            form.save()
-            username = form.cleaned_data['username']
-            raw_password = form.cleaned_data['password1']
-            user = authenticate(username=username, password=raw_password)
-            login(request, user)
+            user = form.save()
+            raw_password = form.cleaned_data.get('password1')
+            user = authenticate(request, email=user.email, password=raw_password)
+            if user is not None:
+                login(request, user)
+            else:
+                print('usuario nao encontrado')
             return redirect('/')
+        else:
+            print('formulario incorreto')
     else:
-        form = SignInForm()
-    return render(request, 'signin_page.html', {'form': form, 'usuario': usuario})
+        form = SignUpForm()
+    return render(request, 'signup_page.html', {'form': form, 'usuario': usuario})
 
 def logoff_view(request):
     logout(request)
     return redirect('/index/')
 
+
 def user_info_view(request):
     usuario = get_user(request)
-    if usuario.is_anonymous:
-        return redirect('/user/login')
-    nome = usuario.get_full_name()
-    email = User.objects.filter(username=usuario).values('email')[0]['email']
-    data_cadastro = User.objects.filter(username=usuario).values('date_joined')[0]['date_joined']
-    ultimo_login = User.objects.filter(username=usuario).values('last_login')[0]['last_login']
-    return render(request, 'user_page.html', 
-        {'usuario': usuario,
-         'nome': nome.title(), 
-         'email': email,
-         'data_cadastro': data_cadastro,
-         'senha': '*******',
-         'ultimo_login': ultimo_login,
-         })
 
-def alter_user_info_view(request):
-    usuario = get_user(request)
-    nome = usuario.get_short_name()
-    sobrenome = usuario.get_full_name()
-    email = User.objects.filter(username=usuario).values('email')[0]['email']
-    form = AlterUserForm(initial={'nome': nome, 'senha': 'testesenha', 'email': email})
-    login_erro = False
-    if request.method == 'POST':
-        form = AlterUserForm(request.POST)
-        if form.is_valid():
-            login_user = authenticate(request, username=usuario.get_username(), password=form['senha'].value())
-            print(login_user)
-            if login_user is not None:
-                login_user.save() # não funciona para salvar as alterações
-            else:
-                login_erro = True
-    return render(request, 'alter_user_page.html', 
-        {'usuario': usuario,
-         'nome': nome.title(),
-         'sobrenome': sobrenome.title(),
-         'email': email,
-         'form': form,
-         'login_erro': login_erro,
-         })
+
+    return render(request, 'user_page.html', {'usuario': usuario})

@@ -1,20 +1,14 @@
 from django.contrib.auth.forms import UserCreationForm
-from django.contrib.auth.models import User
 from django.forms import CharField, PasswordInput, Form
 from django.forms.fields import EmailField
-from django.forms.widgets import HiddenInput
+from .models import UserModel
 
 
-class SignInForm(UserCreationForm):
-
-    def __init__(self, *args: any, **kwargs: any) -> None:
-        super().__init__(*args, **kwargs)
-        for fieldname in ['username', 'password1', 'password2']:
-            self.fields[fieldname].help_text = None
+class SignUpForm(UserCreationForm):
 
     class Meta:
-        model = User
-        fields = 'username','first_name', 'last_name', 'email'
+        model = UserModel
+        fields = 'username', 'email'
 
 
 class LoginForm(Form):

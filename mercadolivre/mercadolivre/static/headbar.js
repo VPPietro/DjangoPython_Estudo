@@ -21,10 +21,10 @@ function activate_page(pagina){
 
 
 if (usuario == 'AnonymousUser'){
-    document.getElementById('list').innerHTML = 
+    document.getElementById('list').innerHTML =
         '<li id="index"><a href="/index/">Home</a></li>'+
         '<li class="LoginOut" id="login"><a href="/user/login/">Login</a></li>'+
-        '<li class="LoginOut" id="signin"><a href="/user/signin/">Sign In</a></li>'
+        '<li class="LoginOut" id="signin"><a href="/user/signup/">Sign Up</a></li>'
     activate_page(location.pathname)
 }
 else{
