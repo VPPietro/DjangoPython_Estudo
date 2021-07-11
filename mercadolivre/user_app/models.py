@@ -48,4 +48,13 @@ class UserModel(AbstractBaseUser):
     objects = UserManager()
 
     def __str__(self):
-        return self.username
+      return self.username
+
+    def get_is_superuser(self):
+      return self.is_superuser
+
+    def has_perm(self, app_label):  # Usado na página admin
+      return self.is_superuser
+
+    def has_module_perms(self, perm, obj=None):  # Usado na página admin
+      return self.is_superuser

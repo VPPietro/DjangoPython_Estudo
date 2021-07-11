@@ -14,6 +14,9 @@ class UserView(DetailView):
 def login_view(request):
     form = LoginForm()
     usuario = get_user(request)
+    superuser = False
+    if str(usuario) != 'AnonymousUser':
+        superuser = usuario.get_is_superuser()
     if request.method == 'POST':
         form = LoginForm(request.POST)
         if form.is_valid():
@@ -24,10 +27,17 @@ def login_view(request):
                 return redirect('/')
             else:
                 print('login user dosent existis/invalid') # definir retorno de usuario inexistente na pag.
-    return render(request, 'login_page.html', {'form': form, 'usuario': usuario})
+    return render(request, 'login_page.html',
+        {'form': form,
+        'usuario': usuario,
+        'superuser': superuser
+        })
 
 def signup(request):
     usuario = get_user(request)
+    superuser = False
+    if str(usuario) != 'AnonymousUser':
+        superuser = usuario.get_is_superuser()
     if request.method == 'POST':
         form = SignUpForm(request.POST)
         if form.is_valid():
@@ -43,7 +53,11 @@ def signup(request):
             print('formulario incorreto')
     else:
         form = SignUpForm()
-    return render(request, 'signup_page.html', {'form': form, 'usuario': usuario})
+    return render(request, 'signup_page.html',
+        {'form': form,
+        'usuario': usuario,
+        'superuser': superuser
+        })
 
 def logoff_view(request):
     logout(request)
@@ -52,6 +66,10 @@ def logoff_view(request):
 
 def user_info_view(request):
     usuario = get_user(request)
-
-
-    return render(request, 'user_page.html', {'usuario': usuario})
+    superuser = False
+    if str(usuario) != 'AnonymousUser':
+        superuser = usuario.get_is_superuser()
+    return render(request, 'user_page.html',
+        {'usuario': usuario,
+        'superuser': superuser
+        })

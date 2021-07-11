@@ -6,7 +6,7 @@ h1{
     box-sizing: border-box;
 }
 
-.signin_form{
+.signup_form{
     width: 25%;
     height: auto 115%;
     margin: auto;
@@ -37,10 +37,11 @@ label{
 }
 
 .errorlist{
+    list-style-type: none;
+    text-decoration: none;
     width: 95%;
     padding: 10px;
     margin: 10px 0;
-    text-decoration: none;
     background-color: transparent;
     color: red;
 }

@@ -3,16 +3,16 @@
 
 
 {% block head %}
-<link rel="stylesheet" href="{% static 'user_app/signin_page.css' %}">
+<link rel="stylesheet" href="{% static 'user_app/signup_page.css' %}">
 {% endblock %}
 
 
-{% block title %}Signin{% endblock %}
+{% block title %}Sign up{% endblock %}
 
 {% block content %}
-<h1>Signin</h1>
+<h1>Sign up</h1>
 
-<div class="signin_form">
+<div class="signup_form">
     <form method="POST">
         {% csrf_token %}
         {{ form.as_p }}

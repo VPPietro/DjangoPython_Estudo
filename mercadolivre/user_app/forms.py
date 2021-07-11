@@ -6,6 +6,11 @@ from .models import UserModel
 
 class SignUpForm(UserCreationForm):
 
+    def __init__(self, *args: any, **kwargs: any) -> None:
+        super().__init__(*args, **kwargs)
+        for fieldname in ['username', 'password1', 'password2']:
+            self.fields[fieldname].help_text = None
+
     class Meta:
         model = UserModel
         fields = 'username', 'email'
