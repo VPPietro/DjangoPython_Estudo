@@ -20,7 +20,7 @@
         </li>
         {% endfor %}
         {% if login_erro %}
-        <div id="senhaincorreta"></div>
+        <div id="senhaincorreta" class="errorlist"></div>
         {% endif %}
         {% csrf_token %}
         <input type="submit" value="enviar">

@@ -13,7 +13,7 @@ class SignUpForm(UserCreationForm):
 
     class Meta:
         model = UserModel
-        fields = 'username', 'email'
+        fields = 'username', 'email', 'first_name', 'last_name'
 
 
 class LoginForm(Form):
@@ -23,5 +23,6 @@ class LoginForm(Form):
 
 class AlterUserForm(Form):
     nome = CharField(label='Nome')
+    sobrenome = CharField(label='Sobrenome')
     email = EmailField(label='E-mail')
     senha = CharField(label='Confirme sua senha', widget=PasswordInput)

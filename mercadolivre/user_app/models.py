@@ -35,7 +35,10 @@ class UserModel(AbstractBaseUser):
 
     email =  models.EmailField(max_length=255, verbose_name='email', unique=True)
     username = models.CharField(max_length=255, verbose_name='nickname', unique=True)
+    first_name = models.CharField(max_length=255, verbose_name='Primeiro nome')
+    last_name = models.CharField(max_length=255, verbose_name='Sobrenome')
     date_joined = models.DateField(verbose_name='data de entrada', auto_now_add=True)
+
     is_staff = models.BooleanField(default=False)
     is_superuser = models.BooleanField(default=False)
     is_active = models.BooleanField(default=True)
@@ -50,11 +53,38 @@ class UserModel(AbstractBaseUser):
     def __str__(self):
       return self.username
 
-    def get_is_superuser(self):
-      return self.is_superuser
-
     def has_perm(self, app_label):  # Usado na página admin
       return self.is_superuser
 
     def has_module_perms(self, perm, obj=None):  # Usado na página admin
       return self.is_superuser
+
+    def get_is_superuser(self):
+      return self.is_superuser
+
+    def get_full_name(self):
+      return self.first_name + ' ' +  self.last_name
+
+    def get_first_name(self):
+      return self.first_name
+
+    def set_first_name(self, new_first_name):
+      self.first_name = new_first_name
+      self.save()
+
+    def get_last_name(self):
+      return self.last_name
+
+    def set_last_name(self, new_last_name):
+      self.last_name = new_last_name
+      self.save()
+
+    def get_email(self):
+      return self.email
+
+    def set_email(self, new_email):
+      self.email = new_email
+      self.save()
+
+    def get_data_cadastro(self):
+      return self.date_joined

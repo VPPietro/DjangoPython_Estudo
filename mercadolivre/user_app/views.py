@@ -1,7 +1,6 @@
 from django.contrib.auth import authenticate, login, logout, get_user
 from django.shortcuts import redirect, render
 from .forms import AlterUserForm, SignUpForm, LoginForm
-from .models import UserModel
 from django.views.generic.detail import DetailView
 
 class UserView(DetailView):
@@ -63,7 +62,6 @@ def logoff_view(request):
     logout(request)
     return redirect('/index/')
 
-
 def user_info_view(request):
     usuario = get_user(request)
     superuser = False
@@ -71,5 +69,27 @@ def user_info_view(request):
         superuser = usuario.get_is_superuser()
     return render(request, 'user_page.html',
         {'usuario': usuario,
-        'superuser': superuser
+        'superuser': superuser,
+        'nome' : usuario.get_full_name(),
+        'email': usuario.get_email(),
+        'data_cadastro': usuario.get_data_cadastro(),
         })
+
+def alter_user_info_view(request):
+    usuario = get_user(request)
+    form = AlterUserForm(initial={
+        'nome': usuario.get_first_name(),
+        'sobrenome': usuario.get_last_name(),
+        'email': usuario.get_email(),
+        })
+    login_erro = False
+    if request.method == 'POST':
+        senha = request.POST['senha']
+        authent = authenticate(request, username=usuario.get_username(), password=senha)
+        if authent is not None:
+            usuario.set_first_name(request.POST['nome'])
+            usuario.set_last_name(request.POST['sobrenome'])
+            usuario.set_email(request.POST['email'])
+        else:
+            login_erro = True
+    return render(request, 'alter_user_page.html', {'form': form,'usuario': usuario, 'login_erro': login_erro})

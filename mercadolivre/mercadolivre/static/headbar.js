@@ -17,7 +17,7 @@ function activate_page(pagina){
     else if (pagina === '/user/login/'){
         document.querySelector('#login').querySelector('a').setAttribute('class', 'active')
     }
-    else if (pagina === '/user/info/'){
+    else if (pagina === '/user/info/' || pagina === '/user/alterinfo/'){
         document.querySelector('#userinfo').querySelector('a').setAttribute('class', 'active')
     }
 }
