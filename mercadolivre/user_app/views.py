@@ -6,6 +6,7 @@ from django.views.generic.detail import DetailView
 class UserView(DetailView):
 
     template_name = 'sigin_page.html'
+    
 
     def get_object(self):
         return self.request.user
@@ -64,6 +65,7 @@ def logoff_view(request):
 
 def user_info_view(request):
     usuario = get_user(request)
+
     superuser = False
     if str(usuario) != 'AnonymousUser':
         superuser = usuario.get_is_superuser()
