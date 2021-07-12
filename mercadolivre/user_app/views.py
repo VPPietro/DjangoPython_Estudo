@@ -6,7 +6,7 @@ from django.views.generic.detail import DetailView
 class UserView(DetailView):
 
     template_name = 'sigin_page.html'
-    
+
 
     def get_object(self):
         return self.request.user

@@ -1,0 +1,26 @@
+{% extends 'base.html' %}
+
+{% block head %}
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
+{% endblock %}
+
+{% block content %}
+<div class="card">
+    <div class="card-header">
+        <h5 class="card-title">Detalhe do Item #{{item.id}}</h5>
+    </div>
+    <div class="card-body">
+    <dl class="row">
+    <dt class="col-sm-3">Nome do Item</dt>
+    <dd class="col-sm-9">{{ item.nome }}</dd>
+    <dt class="col-sm-3">Descrição do Item</dt>
+    <dd class="col-sm-9">{{ item.descricao }}</dd>
+    <dt class="col-sm-3">Valor do Item</dt>
+    <dd class="col-sm-9">{{ item.valor }}</dd>
+    <dt class="col-sm-3">Quantidade do Item</dt>
+    <dd class="col-sm-9">{{ item.quantidade }}</dd>
+    </dl>
+    </div>
+</div>
+{% endblock %}

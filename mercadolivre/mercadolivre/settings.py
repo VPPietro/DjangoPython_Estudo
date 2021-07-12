@@ -39,6 +39,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'index_app',
     'user_app',
+    'loja_app',
 ]
 
 MIDDLEWARE = [
@@ -60,6 +61,7 @@ TEMPLATES = [
             BASE_DIR / 'index_app' / 'templates',
             BASE_DIR / 'mercadolivre' / 'templates',
             BASE_DIR / 'user_app' / 'templates',
+            BASE_DIR / 'loja_app' / 'templates',
         ],
         'APP_DIRS': True,
         'OPTIONS': {
