@@ -1,6 +1,7 @@
+from unicodedata import name
 from django.core.paginator import EmptyPage, PageNotAnInteger, Paginator
 from django.utils.decorators import method_decorator
-from django.contrib.auth.decorators import login_required, permission_required
+from django.contrib.auth.decorators import permission_required
 
 from django.views.generic import ListView, CreateView, DetailView, UpdateView, DeleteView
 from django.urls import reverse_lazy
@@ -28,7 +29,9 @@ class ItemListView(ListView):
     #     context['itens'] = itens
     #     return context
 
-decorators = [permission_required(login_url='/user/login', perm='is_superuser')]
+decorators = [
+    permission_required(login_url='/user/login', perm='user_app.hasperms')
+    ]
 
 @method_decorator(decorators, name='dispatch')
 class ItemCreateView(CreateView):
@@ -55,7 +58,7 @@ class ItemUpdateView(UpdateView):
         return reverse_lazy('detalhe-itens', kwargs={'pk': self.object.id})
 
 
-@method_decorator(login_required(login_url='/user/login'), name='dispatch')
+@method_decorator(decorators, name='dispatch')
 class ItemDeleteView(DeleteView):
     model = ItensModel
     template_name = 'loja/delete.html'

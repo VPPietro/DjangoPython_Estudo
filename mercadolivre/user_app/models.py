@@ -42,6 +42,7 @@ class UserModel(AbstractBaseUser):
     is_staff = models.BooleanField(default=False)
     is_superuser = models.BooleanField(default=False)
     is_active = models.BooleanField(default=True)
+    is_seller = models.BooleanField(default=False)
     last_login = models.DateTimeField(null=True, blank=True)
     date_joined = models.DateTimeField(auto_now_add=True)
 
@@ -88,3 +89,6 @@ class UserModel(AbstractBaseUser):
 
     def get_data_cadastro(self):
       return self.date_joined
+
+    def get_id(self):
+      return self.id
