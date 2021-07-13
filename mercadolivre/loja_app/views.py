@@ -1,6 +1,6 @@
 from django.core.paginator import EmptyPage, PageNotAnInteger, Paginator
 from django.utils.decorators import method_decorator
-from django.contrib.auth.decorators import login_required
+from django.contrib.auth.decorators import login_required, permission_required
 
 from django.views.generic import ListView, CreateView, DetailView, UpdateView, DeleteView
 from django.urls import reverse_lazy
@@ -28,8 +28,9 @@ class ItemListView(ListView):
     #     context['itens'] = itens
     #     return context
 
+decorators = [permission_required(login_url='/user/login', perm='is_superuser')]
 
-@method_decorator(login_required(login_url='/user/login'), name='dispatch')
+@method_decorator(decorators, name='dispatch')
 class ItemCreateView(CreateView):
     model = ItensModel
     template_name = 'loja/create.html'
@@ -43,7 +44,7 @@ class ItemDetailView(DetailView):
     context_object_name = 'item'
 
 
-@method_decorator(login_required(login_url='/user/login'), name='dispatch')
+@method_decorator(decorators, name='dispatch')
 class ItemUpdateView(UpdateView):
     model = ItensModel
     template_name = 'loja/update.html'

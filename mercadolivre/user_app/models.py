@@ -53,7 +53,7 @@ class UserModel(AbstractBaseUser):
     def __str__(self):
       return self.username
 
-    def has_perm(self, app_label):  # Usado na página admin
+    def has_perms(self, app_label):  # Usado na página admin and the decorator os class based view
       return self.is_superuser
 
     def has_module_perms(self, perm, obj=None):  # Usado na página admin

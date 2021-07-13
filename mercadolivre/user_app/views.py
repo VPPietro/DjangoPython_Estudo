@@ -29,8 +29,7 @@ def login_view(request):
                 print('login user dosent existis/invalid') # definir retorno de usuario inexistente na pag.
     return render(request, 'login_page.html',
         {'form': form,
-        'usuario': usuario,
-        'superuser': superuser
+        'superuser': superuser,
         })
 
 def signup(request):
@@ -55,7 +54,6 @@ def signup(request):
         form = SignUpForm()
     return render(request, 'signup_page.html',
         {'form': form,
-        'usuario': usuario,
         'superuser': superuser
         })
 
@@ -70,8 +68,7 @@ def user_info_view(request):
     if str(usuario) != 'AnonymousUser':
         superuser = usuario.get_is_superuser()
     return render(request, 'user_page.html',
-        {'usuario': usuario,
-        'superuser': superuser,
+        {'superuser': superuser,
         'nome' : usuario.get_full_name(),
         'email': usuario.get_email(),
         'data_cadastro': usuario.get_data_cadastro(),
@@ -94,4 +91,4 @@ def alter_user_info_view(request):
             usuario.set_email(request.POST['email'])
         else:
             login_erro = True
-    return render(request, 'alter_user_page.html', {'form': form,'usuario': usuario, 'login_erro': login_erro})
+    return render(request, 'alter_user_page.html', {'form': form, 'login_erro': login_erro})

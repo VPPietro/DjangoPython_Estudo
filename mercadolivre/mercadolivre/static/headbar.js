@@ -20,12 +20,16 @@ function activate_page(pagina){
     else if (pagina === '/user/info/' || pagina === '/user/alterinfo/'){
         document.querySelector('#userinfo').querySelector('a').setAttribute('class', 'active')
     }
+    else if (pagina === '/loja/' || '/loja/<int:pk>/'){
+        document.querySelector('#loja').querySelector('a').setAttribute('class', 'active')
+    }
 }
 
 
 if (usuario == 'AnonymousUser'){
     document.getElementById('list').innerHTML =
         '<li id="index"><a href="/index/">Home</a></li>'+
+        '<li id="loja"><a href="/loja/">Loja</a></li>'+
         '<li class="LoginOut" id="login"><a href="/user/login/">Login</a></li>'+
         '<li class="LoginOut" id="signup"><a href="/user/signup/">Sign Up</a></li>'
     activate_page(location.pathname)
@@ -33,6 +37,7 @@ if (usuario == 'AnonymousUser'){
 else{
     document.getElementById('list').innerHTML=
         '<li id="index"><a href="/index/">Home</a></li>'+
+        '<li id="loja"><a href="/loja/">Loja</a></li>'+
         '<li id="logoff" class="LoginOut"><a href="/user/logoff">Logout</a></li>' +
         '<li id="userinfo" class="LoginOut"><a href="/user/info">Logado como: '+ usuario +'</a></li>';
         if (superuser === 'True'){
@@ -40,4 +45,3 @@ else{
         }
     activate_page(location.pathname)
 }
-console.log(superuser)
