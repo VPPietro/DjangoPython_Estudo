@@ -1,5 +1,4 @@
 from django.core.paginator import EmptyPage, PageNotAnInteger, Paginator
-from django.http.response import HttpResponse
 from django.utils.decorators import method_decorator
 from django.contrib.auth.decorators import permission_required
 
@@ -9,19 +8,13 @@ from .models import ItensModel
 
 
 class ItemListView(ListView):
+
     model = ItensModel
     template_name = 'loja/list.html'
     context_object_name = 'itens'
     paginate_by = 5
 
-    # def head(self, *args, **kwargs):
-    #     user_itens = self.get(id=1)
-    #     response = HttpResponse(
-    #         headers={'user_itens': user_itens},
-    #     )
-    #     return response
-
-    # CASO PRECISE ADICIONAR PAGINADOR
+    # # CASO PRECISE ADICIONAR PAGINADOR
     # def get_context_data(self, **kwargs: any) -> dict[str, any]:
     #     context = super(ItemListView, self).get_context_data(**kwargs)
     #     itens = self.get_queryset()
@@ -39,6 +32,7 @@ class ItemListView(ListView):
 decorators = [
     permission_required(login_url='/user/login', perm='user_app.hasperms')
     ]
+
 
 @method_decorator(decorators, name='dispatch')
 class ItemCreateView(CreateView):
