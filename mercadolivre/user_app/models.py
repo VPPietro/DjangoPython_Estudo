@@ -46,7 +46,6 @@ class UserModel(AbstractBaseUser):
     last_login = models.DateTimeField(null=True, blank=True)
     date_joined = models.DateTimeField(auto_now_add=True)
 
-
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = ['username']
     objects = UserManager()
@@ -54,7 +53,7 @@ class UserModel(AbstractBaseUser):
     def __str__(self):
       return self.username
 
-    def has_perms(self, app_label):  # Usado na página admin and the decorator os class based view
+    def has_perms(self, app_label):  # Usado na página admin and the module_decorator os class based view
       return self.is_superuser
 
     def has_module_perms(self, perm, obj=None):  # Usado na página admin

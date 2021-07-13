@@ -1,5 +1,5 @@
-from unicodedata import name
 from django.core.paginator import EmptyPage, PageNotAnInteger, Paginator
+from django.http.response import HttpResponse
 from django.utils.decorators import method_decorator
 from django.contrib.auth.decorators import permission_required
 
@@ -13,6 +13,13 @@ class ItemListView(ListView):
     template_name = 'loja/list.html'
     context_object_name = 'itens'
     paginate_by = 5
+
+    # def head(self, *args, **kwargs):
+    #     user_itens = self.get(id=1)
+    #     response = HttpResponse(
+    #         headers={'user_itens': user_itens},
+    #     )
+    #     return response
 
     # CASO PRECISE ADICIONAR PAGINADOR
     # def get_context_data(self, **kwargs: any) -> dict[str, any]:
@@ -37,7 +44,7 @@ decorators = [
 class ItemCreateView(CreateView):
     model = ItensModel
     template_name = 'loja/create.html'
-    fields = ('nome', 'descricao', 'valor', 'quantidade')
+    fields = ('nome', 'descricao', 'valor')
     success_url = reverse_lazy('lista-itens')
 
 
