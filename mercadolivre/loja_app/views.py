@@ -30,7 +30,7 @@ class ItemListView(ListView):
     #     return context
 
 decorators = [
-    permission_required(login_url='/user/login', perm='user_app.hasperms')
+    permission_required(login_url='/user/login', perm='user_app.hasperm')
     ]
 
 

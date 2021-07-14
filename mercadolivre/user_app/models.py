@@ -56,6 +56,9 @@ class UserModel(AbstractBaseUser):
     def has_perms(self, app_label):  # Usado na página admin and the module_decorator os class based view
       return self.is_superuser
 
+    def has_perm(self, app_label):
+      return self.is_superuser
+
     def has_module_perms(self, perm, obj=None):  # Usado na página admin
       return self.is_superuser
 

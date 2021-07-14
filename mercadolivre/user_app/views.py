@@ -3,13 +3,6 @@ from django.shortcuts import redirect, render
 from .forms import AlterUserForm, SignUpForm, LoginForm
 from django.views.generic.detail import DetailView
 
-class UserView(DetailView):
-
-    template_name = 'sigin_page.html'
-
-
-    def get_object(self):
-        return self.request.user
 
 def login_view(request):
     form = LoginForm()
@@ -63,12 +56,13 @@ def logoff_view(request):
 
 def user_info_view(request):
     usuario = get_user(request)
-
     superuser = False
     if str(usuario) != 'AnonymousUser':
         superuser = usuario.get_is_superuser()
     return render(request, 'user_page.html',
-        {'superuser': superuser,
+        {
+        'usuario': usuario.__str__,
+        'superuser': superuser,
         'nome' : usuario.get_full_name(),
         'email': usuario.get_email(),
         'data_cadastro': usuario.get_data_cadastro(),
@@ -89,6 +83,7 @@ def alter_user_info_view(request):
             usuario.set_first_name(request.POST['nome'])
             usuario.set_last_name(request.POST['sobrenome'])
             usuario.set_email(request.POST['email'])
+            return redirect('/')
         else:
             login_erro = True
     return render(request, 'alter_user_page.html', {'form': form, 'login_erro': login_erro})
