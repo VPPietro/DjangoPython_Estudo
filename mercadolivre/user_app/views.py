@@ -56,6 +56,8 @@ def logoff_view(request):
 
 def user_info_view(request):
     usuario = get_user(request)
+    if usuario.is_anonymous:
+        return redirect('/user/login')
     superuser = False
     if str(usuario) != 'AnonymousUser':
         superuser = usuario.get_is_superuser()
@@ -70,6 +72,8 @@ def user_info_view(request):
 
 def alter_user_info_view(request):
     usuario = get_user(request)
+    if usuario.is_anonymous:
+        return redirect('/user/login')
     form = AlterUserForm(initial={
         'nome': usuario.get_first_name(),
         'sobrenome': usuario.get_last_name(),
