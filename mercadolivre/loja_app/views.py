@@ -42,6 +42,16 @@ class ItemCreateView(CreateView):
     success_url = reverse_lazy('lista-itens')
 
 
+class ItemCreation(CreateView):
+    initial = {'size':'L'}
+    model = ItensModel
+    success_url = reverse_lazy('items:index')
+    def get_initial(self):
+        initial_base = super(ItemCreation, self).get_initial()
+        initial_base['menu'] = ItensModel.objects.get(id=1)
+        return initial_base
+
+
 class ItemDetailView(DetailView):
     model = ItensModel
     template_name = 'loja/detail.html'
