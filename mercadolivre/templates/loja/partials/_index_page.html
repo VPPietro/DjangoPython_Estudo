@@ -1,0 +1,18 @@
+{% load static %}
+
+{% block content %}
+{% for item in itens %}
+
+<section class="conteiner col-8">
+    <div class="card" style="width: 18rem;">
+        <img src="{% static 'img/no_foto_item.png' %}" class="card-img-top" alt="...">
+        <div class="card-body">
+            <h5 class="card-title">{{item.nome}}</h5>
+            <p class="card-text">R${{item.valor}}</p>
+            <a href="{% url 'detalhe-item' item.id %}" class="btn btn-primary">Ver detalhes</a>
+        </div>
+    </div>
+</section>
+
+{% endfor %}
+{% endblock %}

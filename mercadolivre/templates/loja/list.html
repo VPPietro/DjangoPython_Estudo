@@ -1,0 +1,12 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+{% if request.path_info == '/' %}
+{% include 'loja/partials/_index_page.html' %}
+
+{% else %}
+{% include 'loja/partials/_user_dashboard.html' %}
+
+{% endif %}
+{% endblock %}

@@ -1,0 +1,24 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load widget_tweaks %}
+
+{% block title %}Login{% endblock %}
+
+{% block content %}
+<h1 class="text-center mt-5 mb-4">Login</h1>
+
+<section class="container col-4">
+    <form method="POST">
+        {% for field in form %}
+            <div class="mb-3">
+                <div class="mb-3">
+                    {{field.label_tag}}
+                    {{field | add_class:'form-control shadow-sm p-3 mb-5 bg-body rounded'}}
+                </div>
+            </div>
+        {% endfor %}
+        {% csrf_token %}
+        <input type="submit" value="Entrar">
+    </form>
+</section>
+{% endblock %}

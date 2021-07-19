@@ -1,0 +1,36 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load widget_tweaks %}
+
+{% block title %}User Info{% endblock %}
+
+{% block head %}
+<!-- <link rel="stylesheet" href="{% static 'user_app/user_page.css' %}"> -->
+{% endblock %}
+
+
+{% block content %}
+<h1 class="text-center mt-5 mb-4">User Info</h1>
+
+<section class="container col-4">
+        {% for field in '1234' %}
+            <div class="mb-3">
+                <div class="mb-3">
+                    {{user.label_tag}}
+                </div>
+            </div>
+        {% endfor %}
+</section>
+
+
+
+
+
+<ul>
+    <li><strong>Usuário:</strong> {{ user.username }}</li>
+    <li><strong>Nome completo:</strong> {{ user.firs_name }}{{user.last_name}}</li>
+    <li><strong>E-mail:</strong> {{ user.email }}</li>
+    <li><strong>Data de cadastro:</strong> {{ user.date_joined }}</li>
+</ul>
+<a href="/user/alterinfo">Alterar informações</a>
+{% endblock %}
