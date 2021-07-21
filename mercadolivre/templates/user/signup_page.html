@@ -11,20 +11,26 @@
 {% block title %}Sign up{% endblock %}
 
 {% block content %}
-<h1 class="text-center mt-5 mb-4">Sign up</h1>
-
-<section class="container col-4">
+<main class="form-signin translate-middle position-absolute top-50 start-50 text-center" style="max-height: 70%;">
     <form method="POST">
-        {% for field in form %}
-            <div class="mb-3">
-                <div class="mb-3">
+        <img class="mb-4" src="{% static 'img/logo.png' %}" alt="" width="72" height="72">
+        <h1 class="h3 mb-3 fw-normal">Entre com suas informações para um novo cadastro</h1>
+        {%include 'partials/_alerts.html'%}
+        {% for field in form.visible_fields %}
+            <div class="form-floating">
+                    {{field}}
                     {{field.label_tag}}
-                    {{field | add_class:'form-control shadow-sm p-3 mb-5 bg-body rounded'}}
-                </div>
             </div>
+        {% for error in field.errors %}
+                <section class="alert alert-danger" role="alert">
+                {{field.errors}}
+                </section>
         {% endfor %}
+        {% endfor %}
+
         {% csrf_token %}
-        <input type="submit" value="Cadastrar">
+        <button class="w-100 btn btn-lg btn-primary mt-5" type="submit">Entrar</button>
+        <p class="mt-5 mb-3 text-muted">© Eshop</p>
     </form>
-</section>
+</main>
 {% endblock %}

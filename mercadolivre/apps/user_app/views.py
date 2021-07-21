@@ -1,4 +1,5 @@
 from django.contrib.auth import authenticate, login, logout, get_user
+from django.contrib import messages
 from django.shortcuts import redirect, render
 from .forms import AlterUserForm, SignUpForm, LoginForm
 from django.views.generic.detail import DetailView
@@ -10,7 +11,6 @@ def login_view(request):
     if usuario.is_anonymous:
         if request.method == 'POST':
             form = LoginForm(request.POST)
-            print(form)
             if form.is_valid():
                 user = authenticate(request, username=form['username'].value(), password=form['password'].value())
                 print('login of ', user)
@@ -18,7 +18,7 @@ def login_view(request):
                     login(request, user)
                     return redirect('/')
                 else:
-                    print('login user dosent existis/invalid') # definir retorno de usuario inexistente na pag.
+                    messages.error(request, 'E-mail ou senha inválido(s)')
     return render(request, 'user/login_page.html', {'form': form})
 
 
