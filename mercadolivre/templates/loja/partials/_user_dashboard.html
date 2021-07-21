@@ -1,0 +1,36 @@
+{% block content %}
+<div class="container">
+<table class="table">
+    <tr>
+        <thead class="thead-light">
+            <tr>
+                <th scope="col">nome</th>
+                <th scope="col">desc</th>
+                <th>valor</th>
+                <th>quantidade</th>
+                <th>vendedor</th>
+                <th>info</th>
+                <th>update</th>
+                <th>delete</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for item in itens %}
+            {% if item.vendedor.id == user.id %}
+            <tr>
+                <td>{{item.nome}}</td>
+                <td>{{item.descricao}}</td>
+                <td>{{item.valor}}</td>
+                <td>{{item.quantidade}}</td>
+                <td>{{item.vendedor}}</td>
+                <td><a href="/loja/{{item.id}}" type="button" class="btn btn-info">Info</a></td>
+                <td><a href="/loja/{{item.id}}/update" type="button" class="btn btn-warning">Update</a></td>
+                <td><a href="/loja/{{item.id}}/delete" type="button" class="btn btn-danger">Delete</a></td>
+            </tr>
+            {% endif %}
+            {% endfor %}
+            <td><a type="button" class="btn btn-success" href="{% url 'criar-itens' %}">Criar</a></td>
+        </tbody>
+</table>
+</div>
+{% endblock %}

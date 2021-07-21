@@ -1,8 +1,6 @@
-Foi criado todo o projeto baseado em dois apps (signin_app e login_app), porém é um método de login próprio e obsoleto.
-Houve a tentativa de fazer um login com um novo app (user_app) adicionando model e etc porém zoou as migrations.
+https://django-shop.readthedocs.io/en/latest/index.html     -blog django-shop
 
-* Migrations quebra ao tentar migrar o model, pois foi adicionado AUTH_USER_MODEL em settings.py após a primeira migração,
-o que impossibilita de corrigir o problema automáticamente, teria que ser feito correção manual no banco de dados.
+https://github.com/awesto/django-shop/tree/13d9a77aff7eede74a5f363c1d540e005d88dbcd -github django-shop
 
 
-solução: como não tinha nenhum conteúdo no banco exclui tudo e migrei novamente.
+

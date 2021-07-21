@@ -1,0 +1,120 @@
+{% load static %}
+
+{% if request.user.is_anonymous %}
+<!-- ** START NAVBAR ** -->
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+<section class="container">
+    <!-- ** NOME DO SITE ** -->
+    <a class="navbar-brand" href="{% url 'index_page' %}">E-Shop</a>
+
+    <!-- ** HAMBURGUER BUTTON (SMALL SCREEN ** -->
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <!-- ** INICIO CAI DENTRO DO HAMBURGUER BUTTON ** -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+        <!-- ** INICIO HEADBAR LADO ESQUERDO ** -->
+        <ul class="navbar-nav mr-auto">
+
+            <li class="nav-item active">
+                <a class="nav-link disabled">Pagina atual: <span class="sr-only">{{request.path}</span></a>
+            </li>
+
+        </ul>
+        <!-- ** FIM HEADBAR LADO ESQUERDO ** -->
+
+        <!-- ** INICIO CAMPO PESQUISA ** -->
+        <section class="container col-8">
+        <form class="form-inline my-2 my-lg-0">
+            <div class="input-group">
+                <input class="form-control mr-sm-2" type="search" placeholder="Procurar" aria-label="Search">
+                <button class="btn btn-outline-secondary my-2 my-sm-0" type="submit">Procurar</button>
+            </div>
+        </form>
+        </section>
+        <!-- ** FIM CAMPO PESQUISA ** -->
+
+        <!-- ** INICIO HEADBAR LADO DIREITO ** -->
+        <ul class="navbar-nav ml-auto">
+
+            <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Usuario</a>
+                <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                    <a class="dropdown-item" href="{% url 'login_page' %}">Login</a>
+                    <a class="dropdown-item" href="{% url 'signup_page' %}">Cadastro</a>
+                </div>
+            </li>
+
+        </ul>
+        <!-- ** FIM HEADBAR LADO DIREITO ** -->
+
+    </div>
+    <!-- ** FIM CAI DENTRO DO HAMBURGUER ** -->
+</section>
+</nav>
+<!-- ** FIM NAVBAR ** -->
+
+{% else %}
+
+<!-- ** START NAVBAR ** -->
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+<section class="container">
+    <!-- ** NOME DO SITE ** -->
+    <a class="navbar-brand" href="{% url 'index_page' %}">E-Shop</a>
+
+    <!-- ** HAMBURGUER BUTTON (SMALL SCREEN ** -->
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <!-- ** INICIO CAI DENTRO DO HAMBURGUER BUTTON ** -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+        <!-- ** INICIO HEADBAR LADO ESQUERDO ** -->
+        <ul class="navbar-nav mr-auto">
+
+            <li class="nav-item active">
+                <a class="nav-link disabled">Pagina atual: <span class="sr-only">{{request.path}</span></a>
+            </li>
+
+        </ul>
+        <!-- ** FIM HEADBAR LADO ESQUERDO ** -->
+
+        <!-- ** INICIO CAMPO PESQUISA ** -->
+        <section class="container col-8">
+        <form class="form-inline my-2 my-lg-0">
+            <div class="input-group">
+                <input class="form-control mr-sm-2" type="search" placeholder="Procurar" aria-label="Search">
+                <button class="btn btn-outline-secondary my-2 my-sm-0" type="submit">Procurar</button>
+            </div>
+        </form>
+        </section>
+        <!-- ** FIM CAMPO PESQUISA ** -->
+
+        <!-- ** INICIO HEADBAR LADO DIREITO ** -->
+        <ul class="navbar-nav ml-auto">
+
+            <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Logado como: {{request.user}}</a>
+                <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                    <a class="dropdown-item" href="{% url 'lista-itens-user' %}">Sua Loja</a>
+                    <a class="dropdown-item" href="{% url 'user_info_page' %}">Informações do Usuario</a>
+                    {% if user.is_superuser %}
+                    <a class="dropdown-item" href="/admin">ADMIN</a>
+                    {% endif %}
+                    <div class="dropdown-divider"></div>
+                    <a class="dropdown-item" href="{% url 'logoff_page' %}">Logout</a>
+                </div>
+            </li>
+
+        </ul>
+        <!-- ** FIM HEADBAR LADO DIREITO ** -->
+
+    </div>
+    <!-- ** FIM CAI DENTRO DO HAMBURGUER ** -->
+</section>
+</nav>
+ <!-- ** FIM NAVBAR ** -->
+
+
+{% endif %}

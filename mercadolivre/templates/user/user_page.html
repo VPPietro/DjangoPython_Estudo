@@ -1,0 +1,36 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load widget_tweaks %}
+
+{% block title %}User Info{% endblock %}
+
+{% block head %}
+<!-- <link rel="stylesheet" href="{% static 'user_app/user_page.css' %}"> -->
+{% endblock %}
+
+
+{% block content %}
+<h1 class="text-center mt-5 mb-4">User Info</h1>
+
+<section class="container col-4">
+    <div class="mb-3 mt-3">
+        <div class="mb-3">
+            <strong>Nickname: </strong>{{user.username}}
+        </div>
+        <div class="mb-3">
+            <strong>Nome completo: </strong> {{user.first_name}} {{user.last_name}}
+        </div>
+        <div class="mb-3">
+            <strong>E-mail: </strong> {{user.email}}
+        </div>
+        <div class="mb-3">
+            <strong>Último login: </strong>{{user.last_login}}
+        </div>
+        <div class="mb-3">
+            <strong>Data de cadastro: </strong>{{user.date_joined}}
+        </div>
+    </div>
+
+    <a href="/user/alterinfo">Alterar informações</a>
+</section>
+{% endblock %}

@@ -37,8 +37,10 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'index_app',
-    'user_app',
+    'apps.index_app',
+    'apps.user_app',
+    'apps.loja_app',
+    'widget_tweaks'
 ]
 
 MIDDLEWARE = [
@@ -57,9 +59,7 @@ TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
         'DIRS': [
-            BASE_DIR / 'index_app' / 'templates',
-            BASE_DIR / 'mercadolivre' / 'templates',
-            BASE_DIR / 'user_app' / 'templates',
+            BASE_DIR / 'templates',
         ],
         'APP_DIRS': True,
         'OPTIONS': {
@@ -128,9 +128,7 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 STATICFILES_DIRS = [
-    BASE_DIR / 'mercadolivre' / 'static',
-    BASE_DIR / 'index_app' / 'static',
-    BASE_DIR / 'user_app' / 'static',
+    BASE_DIR / 'static',
 ]
 
 
@@ -138,3 +136,6 @@ STATICFILES_DIRS = [
 # https://docs.djangoproject.com/en/3.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+
+AUTH_USER_MODEL = 'user_app.UserModel'

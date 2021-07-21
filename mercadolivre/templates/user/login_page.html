@@ -1,0 +1,27 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Login E-shop{% endblock %}
+
+
+{% block content %}
+<section class="text-center position-absolute top-50 start-50 translate-middle">
+<main class="form-signin">
+    <form method="POST">
+        <img class="mb-4" src="{% static 'img/logo.png' %}" alt="" width="72" height="72">
+        <h1 class="h3 mb-3 fw-normal">Entre com suas informações</h1>
+
+        {% for field in form %}
+            <div class="form-floating">
+                    {{field.label}}
+                    {{field}}
+            </div>
+        {% endfor %}
+
+        {% csrf_token %}
+        <button class="w-100 btn btn-lg btn-primary mt-5" type="submit">Entrar</button>
+        <p class="mt-5 mb-3 text-muted">© Eshop</p>
+    </form>
+</main>
+</section>
+{% endblock %}
