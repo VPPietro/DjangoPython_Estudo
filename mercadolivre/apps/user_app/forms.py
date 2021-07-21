@@ -20,7 +20,19 @@ class SignUpForm(UserCreationForm):
 class LoginForm(Form):
     username = CharField(label='Username')
     password = CharField(label='Senha', widget=PasswordInput)
+    # name = CharField(widget=TextInput(attrs={"class": "form-control"}))
+    # message = CharField(widget=Textarea(attrs={"class": "form-control"}))
 
+    def __init__(self, *args, **kwargs):
+        super(LoginForm, self).__init__(*args, **kwargs)
+        self.fields['username'].widget.attrs['class'] = 'form-control'
+        self.fields['username'].widget.attrs['placeholder'] = 'nome@dominio.com.br'
+        self.fields['username'].widget.attrs['id'] = 'floatingInput'
+
+        self.fields['password'].widget.attrs['class'] = 'form-control'
+        self.fields['password'].widget.attrs['placeholder'] = 'Senha'
+        self.fields['password'].widget.attrs['id'] = 'floatingPassword'
+        print(self.fields.items()['username'])
 
 class AlterUserForm(Form):
     nome = CharField(label='Nome')

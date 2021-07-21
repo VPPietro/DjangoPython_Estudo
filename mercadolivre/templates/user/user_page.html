@@ -13,24 +13,24 @@
 <h1 class="text-center mt-5 mb-4">User Info</h1>
 
 <section class="container col-4">
-        {% for field in '1234' %}
-            <div class="mb-3">
-                <div class="mb-3">
-                    {{user.label_tag}}
-                </div>
-            </div>
-        {% endfor %}
+    <div class="mb-3 mt-3">
+        <div class="mb-3">
+            <strong>Nickname: </strong>{{user.username}}
+        </div>
+        <div class="mb-3">
+            <strong>Nome completo: </strong> {{user.first_name}} {{user.last_name}}
+        </div>
+        <div class="mb-3">
+            <strong>E-mail: </strong> {{user.email}}
+        </div>
+        <div class="mb-3">
+            <strong>Último login: </strong>{{user.last_login}}
+        </div>
+        <div class="mb-3">
+            <strong>Data de cadastro: </strong>{{user.date_joined}}
+        </div>
+    </div>
+
+    <a href="/user/alterinfo">Alterar informações</a>
 </section>
-
-
-
-
-
-<ul>
-    <li><strong>Usuário:</strong> {{ user.username }}</li>
-    <li><strong>Nome completo:</strong> {{ user.firs_name }}{{user.last_name}}</li>
-    <li><strong>E-mail:</strong> {{ user.email }}</li>
-    <li><strong>Data de cadastro:</strong> {{ user.date_joined }}</li>
-</ul>
-<a href="/user/alterinfo">Alterar informações</a>
 {% endblock %}

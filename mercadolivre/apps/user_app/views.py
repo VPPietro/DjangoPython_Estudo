@@ -10,6 +10,7 @@ def login_view(request):
     if usuario.is_anonymous:
         if request.method == 'POST':
             form = LoginForm(request.POST)
+            print(form)
             if form.is_valid():
                 user = authenticate(request, username=form['username'].value(), password=form['password'].value())
                 print('login of ', user)
@@ -19,6 +20,7 @@ def login_view(request):
                 else:
                     print('login user dosent existis/invalid') # definir retorno de usuario inexistente na pag.
     return render(request, 'user/login_page.html', {'form': form})
+
 
 def signup(request):
     usuario = get_user(request)
@@ -42,9 +44,11 @@ def signup(request):
             form = SignUpForm()
     return render(request, 'user/signup_page.html', {'form': form})
 
+
 def logoff_view(request):
     logout(request)
     return redirect('index_page')
+
 
 def user_info_view(request):
     if request.user.is_anonymous:
@@ -54,6 +58,7 @@ def user_info_view(request):
             form = AlterUserForm(request.POST)
             return render(request, 'user/login', {'form': form})
         return render(request, 'user/user_page.html')
+
 
 def alter_user_info_view(request):
     usuario = get_user(request)
