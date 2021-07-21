@@ -32,7 +32,7 @@ class LoginForm(Form):
         self.fields['password'].widget.attrs['class'] = 'form-control'
         self.fields['password'].widget.attrs['placeholder'] = 'Senha'
         self.fields['password'].widget.attrs['id'] = 'floatingPassword'
-        print(self.fields.items()) 
+        print(self.fields.items())  
 
 class AlterUserForm(Form):
     nome = CharField(label='Nome')
