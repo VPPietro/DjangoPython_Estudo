@@ -21,15 +21,15 @@
                     {{field}}
                     {{field.label_tag}}
             </div>
-        {% for error in field.errors %}
-                <section class="alert alert-danger" role="alert">
-                {{field.errors}}
-                </section>
-        {% endfor %}
+            {% if field.errors %}
+                <div class="alert alert-danger" role="alert">
+                    {{field.errors}}
+                </div>
+            {% endif %}
         {% endfor %}
 
         {% csrf_token %}
-        <button class="w-100 btn btn-lg btn-primary mt-5" type="submit">Entrar</button>
+        <button class="w-100 btn btn-lg btn-primary mt-5" type="submit">Cadastrar</button>
         <p class="mt-5 mb-3 text-muted">© Eshop</p>
     </form>
 </main>

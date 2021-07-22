@@ -2,7 +2,6 @@ from django.contrib.auth import authenticate, login, logout, get_user
 from django.contrib import messages
 from django.shortcuts import redirect, render
 from .forms import AlterUserForm, SignUpForm, LoginForm
-from django.views.generic.detail import DetailView
 
 
 def login_view(request):
@@ -13,12 +12,11 @@ def login_view(request):
             form = LoginForm(request.POST)
             if form.is_valid():
                 user = authenticate(request, username=form['username'].value(), password=form['password'].value())
-                print('login of ', user)
                 if user is not None:
                     login(request, user)
                     return redirect('/')
                 else:
-                    messages.error(request, 'E-mail ou senha inválido(s)')
+                    messages.error(request, 'E-mail e/ou senha inválido(s)')
     return render(request, 'user/login_page.html', {'form': form})
 
 
@@ -28,7 +26,6 @@ def signup(request):
     if usuario.is_anonymous:
         if request.method == 'POST':
             form = SignUpForm(request.POST)
-            print(form)
             if form.is_valid():
                 user = form.save()
                 raw_password = form.cleaned_data.get('password1')
@@ -36,10 +33,10 @@ def signup(request):
                 if user is not None:
                     login(request, user)
                 else:
-                    print('usuario nao encontrado')
+                    messages.error(request, 'Ocorreu um erro, tente fazer login')
                 return redirect('index_page')
             else:
-                print('formulario incorreto')
+                messages.error(request, 'Formulário preenchido incorretamente, favor corrigir os campos destacados')
         else:
             form = SignUpForm()
     return render(request, 'user/signup_page.html', {'form': form})

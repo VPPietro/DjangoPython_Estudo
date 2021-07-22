@@ -12,7 +12,9 @@ class ItemListView(ListView):
     model = ItensModel
     template_name = 'loja/list.html'
     context_object_name = 'itens'
-    paginate_by = 5
+    # paginate_by = 5
+
+    def get_context_data(self, *, object_list=None, **kwargs):
 
     # # CASO PRECISE ADICIONAR PAGINADOR
     # def get_context_data(self, **kwargs: any) -> dict[str, any]:
