@@ -19,7 +19,7 @@
             {{x}}
         </li>
         {% endfor %}
-        {% if login_erro %}
+        {% if errors %}
         <div id="senhaincorreta" class="errorlist"></div>
         {% endif %}
         {% csrf_token %}

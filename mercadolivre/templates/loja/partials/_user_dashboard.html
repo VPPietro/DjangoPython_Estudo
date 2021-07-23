@@ -6,9 +6,9 @@
     <tr>
         <thead class="thead-light">
             <tr>
-                <th scope="col">img</th>
-                <th scope="col">nome</th>
-                <th scope="col">desc</th>
+                <th>img</th>
+                <th>nome</th>
+                <th>desc</th>
                 <th>valor</th>
                 <th>quantidade</th>
                 <th>vendedor</th>
@@ -21,7 +21,7 @@
             {% for item in itens %}
             {% if item.vendedor.id == user.id %}
             <tr>
-                <td><img src="asd" alt="{% static 'img/no_foto_item.png' %}" width="50" height="50"></td>
+                <td><img src="{% static item.imagem %}" alt="not found" width="50" height="50"></td>
                 <td>{{item.nome}}</td>
                 <td>{{item.descricao}}</td>
                 <td>{{item.valor}}</td>

@@ -66,7 +66,6 @@ def alter_user_info_view(request):
         'sobrenome': usuario.get_last_name(),
         'email': usuario.get_email(),
         })
-    login_erro = False
     if request.method == 'POST':
         senha = request.POST['senha']
         authent = authenticate(request, username=usuario.get_username(), password=senha)
@@ -74,7 +73,7 @@ def alter_user_info_view(request):
             usuario.set_first_name(request.POST['nome'])
             usuario.set_last_name(request.POST['sobrenome'])
             usuario.set_email(request.POST['email'])
-            return redirect('/')
+            return redirect('user_info_page')
         else:
-            login_erro = True
-    return render(request, 'user/alter_user_page.html', {'form': form, 'login_erro': login_erro})
+            messages.error(request, 'Senha incorreta')
+    return render(request, 'user/alter_user_page.html', {'form': form})
