@@ -64,9 +64,14 @@ class ItemCreateView(CreateView):
 
     initial = {}
     model = ItensModel
-    template_name = 'loja/create.html'
+    # template_name = 'loja/create.html'
     fields = ('nome', 'descricao', 'valor', 'quantidade', 'vendedor')
     success_url = reverse_lazy('lista-itens-user')
+
+    def get(self, request, *args, **kwargs):
+        context = {'form': CreateItemForm()}
+        user = UserModel.objects.filter(username=request.user)
+        return render(request, 'loja/create.html', context)
 
 
 @method_decorator(decorators, name='dispatch')

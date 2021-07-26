@@ -23,20 +23,20 @@ class SignUpForm(UserCreationForm):
 
     username = CharField(label='Nome de Usuário', max_length=150, widget=TextInput(attrs=
                                                                                 {'class': 'form-control',
-                                                                                 'id': 'usernameInput',
-                                                                                 'placeholder': 'Nome de usuário'}))
+                                                                                'id': 'usernameInput',
+                                                                                'placeholder': 'Nome de usuário'}))
     email = EmailField(label='E-mail' ,max_length=255, widget=EmailInput(attrs=
                                                                                 {'class': 'form-control',
-                                                                                 'id': 'emailInput',
-                                                                                 'placeholder': 'E-mail'}))
+                                                                                'id': 'emailInput',
+                                                                                'placeholder': 'E-mail'}))
     first_name = CharField(label='Primeiro nome', max_length=100, widget=TextInput(attrs=
                                                                                 {'class': 'form-control',
-                                                                                 'id': 'fnameInput',
-                                                                                 'placeholder': 'Primeiro Nome'}))
+                                                                                'id': 'fnameInput',
+                                                                                'placeholder': 'Primeiro Nome'}))
     last_name = CharField(label='Último nome', max_length=100, widget=TextInput(attrs=
                                                                                 {'class': 'form-control',
-                                                                                 'id': 'lnameInput',
-                                                                                 'placeholder': 'Último Nome'}))
+                                                                                'id': 'lnameInput',
+                                                                                'placeholder': 'Último Nome'}))
 
     def clean_username(self):
         username = self.cleaned_data.get('username')
@@ -66,12 +66,12 @@ class SignUpForm(UserCreationForm):
 class LoginForm(Form):
     username = EmailField(label='E-mail', widget=EmailInput(attrs=
                                                             {'class': 'form-control',
-                                                             'placeholder': 'nome@dominio.com.br',
-                                                             'id': 'floatingInput'}))
+                                                            'placeholder': 'nome@dominio.com.br',
+                                                            'id': 'floatingInput'}))
     password = CharField(label='Senha', widget=PasswordInput(attrs=
-                                                             {'class': 'form-control',
-                                                              'placeholder': 'Senha',
-                                                              'id': 'floatingPassword'}))
+                                                            {'class': 'form-control',
+                                                            'placeholder': 'Senha',
+                                                            'id': 'floatingPassword'}))
 
 
 class AlterUserForm(Form):
