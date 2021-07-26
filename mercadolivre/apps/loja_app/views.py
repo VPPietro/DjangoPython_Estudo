@@ -1,10 +1,12 @@
 from django.core.paginator import EmptyPage, PageNotAnInteger, Paginator
 from django.utils.decorators import method_decorator
 from django.contrib.auth.decorators import permission_required
-
+from django.shortcuts import render
 from django.views.generic import ListView, CreateView, DetailView, UpdateView, DeleteView
 from django.urls import reverse_lazy
 from .models import ItensModel
+from apps.user_app.models import UserModel
+from apps.loja_app.forms import CreateItemForm
 
 
 class ItemListView(ListView):
@@ -20,7 +22,6 @@ class ItemListView(ListView):
         por coluna na index e dashboard"""
         # Herdando o context original:
         context = super(ItemListView, self).get_context_data(**kwargs)
-        print(context)
         return context
         # Separando itens em listas dentro da lista original de context['itens']
         # quantidade_por_linha = 10
@@ -31,7 +32,6 @@ class ItemListView(ListView):
         #     end = start + quantidade_por_linha
         #     lista_parcial.append(context['itens'][start:end])
         # context['itens'] = lista_parcial
-        # print(context)
         # return context
 
         # ** CASO PRECISE ADICIONAR UM PAGINADOR **
@@ -48,35 +48,25 @@ class ItemListView(ListView):
         # return context
 
 
+class ItemDetailView(DetailView):
+    model = ItensModel
+    template_name = 'loja/detail.html'
+    context_object_name = 'item'
+
+
 decorators = [
-    permission_required(login_url='/user/login', perm='user_app.hasperm')
+    permission_required(login_url='/user/login', perm='user_app.has_perm')
     ]
 
 
 @method_decorator(decorators, name='dispatch')
 class ItemCreateView(CreateView):
-    # initial = {'vendedor': }
+
+    initial = {}
     model = ItensModel
     template_name = 'loja/create.html'
     fields = ('nome', 'descricao', 'valor', 'quantidade', 'vendedor')
     success_url = reverse_lazy('lista-itens-user')
-
-
-# class ItemCreation(CreateView):
-#     initial = {'size': 'L'}
-#     model = ItensModel
-#     success_url = reverse_lazy('items:index')
-#
-#     def get_initial(self):
-#         initial_base = super(ItemCreation, self).get_initial()
-#         initial_base['menu'] = ItensModel.objects.get(id=1)
-#         return initial_base
-
-
-class ItemDetailView(DetailView):
-    model = ItensModel
-    template_name = 'loja/detail.html'
-    context_object_name = 'item'
 
 
 @method_decorator(decorators, name='dispatch')
