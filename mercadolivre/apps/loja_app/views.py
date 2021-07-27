@@ -1,11 +1,11 @@
+from django.http import HttpResponse
 from django.core.paginator import EmptyPage, PageNotAnInteger, Paginator
 from django.utils.decorators import method_decorator
 from django.contrib.auth.decorators import permission_required
-from django.shortcuts import render
+from django.shortcuts import redirect, render
 from django.views.generic import ListView, CreateView, DetailView, UpdateView, DeleteView
 from django.urls import reverse_lazy
 from .models import ItensModel
-from apps.user_app.models import UserModel
 from apps.loja_app.forms import CreateItemForm
 
 
@@ -62,17 +62,33 @@ decorators = [
 @method_decorator(decorators, name='dispatch')
 class ItemCreateView(CreateView):
 
-    initial = {}
     model = ItensModel
-    # template_name = 'loja/create.html'
-    fields = ('nome', 'descricao', 'valor', 'quantidade', 'vendedor')
+    template_name = 'loja/create.html'
+    fields = ('vendedor', 'nome', 'descricao', 'valor', 'quantidade', 'imagem')
     success_url = reverse_lazy('lista-itens-user')
 
-    def get(self, request, *args, **kwargs):
-        context = {'form': CreateItemForm()}
-        user = UserModel.objects.filter(username=request.user)
-        return render(request, 'loja/create.html', context)
+    def get_initial(self) -> dict[str, any]:
+        """Set initial values for fields"""
+        self.initial = {'vendedor': self.request.user.id}
+        return super().get_initial()
 
+    def get_form(self, form_class=None):
+        """Return an instance of the form to be used in this view."""
+        return CreateItemForm(**self.get_form_kwargs())
+
+    def form_valid(self, form: CreateItemForm) -> HttpResponse:
+        form = CreateItemForm(self.request.POST, self.request.FILES)
+        # Camada de segurança, impedir que usuário altere hiddenfield 'vendedor'. tem q criar mensagem?
+        if self.request.POST['vendedor'] != str(self.request.user.id):
+            print('deu erro de vendedor')
+            return redirect('criar-itens')
+        return super().form_valid(form)
+
+    def form_invalid(self, form):
+        """If the form is invalid, render the invalid form."""
+        print('form invalido', self.request.FILES)
+        form = CreateItemForm(self.request.POST, self.request.FILES)
+        return self.render_to_response(self.get_context_data(form=form))
 
 @method_decorator(decorators, name='dispatch')
 class ItemUpdateView(UpdateView):

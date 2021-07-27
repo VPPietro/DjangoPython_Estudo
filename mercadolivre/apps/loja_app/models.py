@@ -11,7 +11,7 @@ class ItensModel(models.Model):
     valor = models.FloatField(name='valor')
     quantidade = models.IntegerField(name='quantidade')
     vendedor = models.ForeignKey(UserModel, on_delete=CASCADE)
-    imagem = models.ImageField(verbose_name='Imagem do Produto', default='img/no_foto_item.png')
+    imagem = models.ImageField(verbose_name='Imagem do Produto', upload_to='fotos/%Y/%m/%d/')
 
     class Meta:
         db_table = 'itens_model'
