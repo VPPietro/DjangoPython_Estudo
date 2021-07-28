@@ -90,6 +90,7 @@ class ItemCreateView(CreateView):
         form = CreateItemForm(self.request.POST, self.request.FILES)
         return self.render_to_response(self.get_context_data(form=form))
 
+
 @method_decorator(decorators, name='dispatch')
 class ItemUpdateView(UpdateView):
     model = ItensModel

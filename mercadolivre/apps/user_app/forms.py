@@ -1,5 +1,5 @@
 from django.contrib.auth.forms import UserCreationForm
-from django.forms import CharField, PasswordInput, Form, EmailField, EmailInput, TextInput, ModelForm
+from django.forms import CharField, PasswordInput, Form, EmailField, EmailInput, TextInput
 from apps.user_app.validators import *
 
 
@@ -67,11 +67,11 @@ class LoginForm(Form):
     username = EmailField(label='E-mail', widget=EmailInput(attrs=
                                                             {'class': 'form-control',
                                                             'placeholder': 'nome@dominio.com.br',
-                                                            'id': 'floatingInput'}))
+                                                            'id': 'emailinput'}))
     password = CharField(label='Senha', widget=PasswordInput(attrs=
                                                             {'class': 'form-control',
                                                             'placeholder': 'Senha',
-                                                            'id': 'floatingPassword'}))
+                                                            'id': 'passwordinput'}))
 
 
 class AlterUserForm(Form):
