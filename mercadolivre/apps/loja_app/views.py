@@ -5,8 +5,10 @@ from django.contrib.auth.decorators import permission_required
 from django.shortcuts import redirect, render
 from django.views.generic import ListView, CreateView, DetailView, UpdateView, DeleteView
 from django.urls import reverse_lazy
+
 from .models import ItensModel
 from apps.loja_app.forms import CreateItemForm
+from mercadolivre.settings import MEDIA_ROOT
 
 
 class ItemListView(ListView):

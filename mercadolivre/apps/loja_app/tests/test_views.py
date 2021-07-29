@@ -1,9 +1,6 @@
 from apps.user_app.models import UserModel
 from django.test import TestCase, RequestFactory
 from django.contrib.auth.models import AnonymousUser
-from selenium import webdriver
-from selenium.webdriver.common.keys import Keys
-from webdriver_manager.chrome import ChromeDriverManager
 from django.test import TestCase
 
 from apps.loja_app.views import ItemCreateView
@@ -48,7 +45,6 @@ class LojaViewTest(TestCase):
         ok_code = list(range(200, 300))
         self.assertIn(response.status_code, ok_code, 'Usuário logado e vendedor, deve ter acesso a página de criação de item')
 
-    
 
         # MOVER PARA TEST DE LOGIN
         # browser = webdriver.Chrome(ChromeDriverManager().install())

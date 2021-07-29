@@ -6,7 +6,7 @@
     <div class="row">
         {% for item in page_obj %}
             <div class="card ms-3 mt-3" style="width: 20rem;">
-                <img src="{% static item.imagem %}" class="card-img-top" alt="Imagem do Produto não encontrada">
+                <img src="/media/{{item.imagem}}" class="card-img-top" alt="{{media_root}}\{{item.imagem}}">
                 <div class="card-body">
                     <h5 class="card-title">{{item.nome.title}}</h5>
                     <p class="card-text">R${{item.valor}}</p>
