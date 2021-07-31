@@ -145,8 +145,8 @@ MEDIA_ROOT = BASE_DIR / 'media'
 MEDIA_URL = '/media/'
 
 # Messages
-from django.contrib.messages import constants as messages
+from django.contrib.messages import constants
 MESSAGE_TAGS = {
-    messages.SUCCESS: 'success',
-    messages.ERROR: 'danger',
+    constants.SUCCESS: 'success',
+    constants.ERROR: 'danger',
 }

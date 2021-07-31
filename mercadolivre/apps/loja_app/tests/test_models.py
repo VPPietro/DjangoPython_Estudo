@@ -16,7 +16,7 @@ class LojaModelsTest(TestCase):
 
     def cria_item(self, nome: str, descricao: str, valor: float, quantidade: int, vendedor: UserModel, imagem: str) -> ItensModel:
         return ItensModel.objects.create(nome=nome, descricao=descricao, valor=valor, quantidade=quantidade, vendedor=vendedor, imagem=imagem)
-    
+
     def criacao_item(self):
         i = self.cria_item('Teste de produto autoTest',
             'Teste criado automaticamente',

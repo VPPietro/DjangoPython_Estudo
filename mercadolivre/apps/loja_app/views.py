@@ -1,14 +1,15 @@
+from django.contrib import messages
 from django.http import HttpResponse
 from django.core.paginator import EmptyPage, PageNotAnInteger, Paginator
 from django.utils.decorators import method_decorator
 from django.contrib.auth.decorators import permission_required
-from django.shortcuts import redirect, render
+from django.shortcuts import redirect
 from django.views.generic import ListView, CreateView, DetailView, UpdateView, DeleteView
 from django.urls import reverse_lazy
+from django.contrib.messages.views import SuccessMessageMixin
 
 from .models import ItensModel
 from apps.loja_app.forms import CreateItemForm
-from mercadolivre.settings import MEDIA_ROOT
 
 
 class ItemListView(ListView):
@@ -62,12 +63,13 @@ decorators = [
 
 
 @method_decorator(decorators, name='dispatch')
-class ItemCreateView(CreateView):
+class ItemCreateView(SuccessMessageMixin, CreateView):
 
     model = ItensModel
     template_name = 'loja/create.html'
-    fields = ('vendedor', 'nome', 'descricao', 'valor', 'quantidade', 'imagem')
+    fields = ( 'nome', 'descricao', 'valor', 'quantidade', 'imagem')
     success_url = reverse_lazy('lista-itens-user')
+    success_message = 'Cadastro realizado com sucesso'
 
     def get_initial(self) -> dict[str, any]:
         """Set initial values for fields"""
@@ -82,14 +84,14 @@ class ItemCreateView(CreateView):
         form = CreateItemForm(self.request.POST, self.request.FILES)
         # Camada de segurança, impedir que usuário altere hiddenfield 'vendedor'. tem q criar mensagem?
         if self.request.POST['vendedor'] != str(self.request.user.id):
-            print('deu erro de vendedor')
+            messages.error(self.request, 'Erro de formulário, tente novamente')
             return redirect('criar-itens')
         return super().form_valid(form)
 
     def form_invalid(self, form):
         """If the form is invalid, render the invalid form."""
-        print('form invalido', self.request.FILES)
         form = CreateItemForm(self.request.POST, self.request.FILES)
+        messages.error(self.request, 'Formulário inválido, corrija os erros abaixo')
         return self.render_to_response(self.get_context_data(form=form))
 
 

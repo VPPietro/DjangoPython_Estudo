@@ -45,6 +45,24 @@ class LojaViewTest(TestCase):
         ok_code = list(range(200, 300))
         self.assertIn(response.status_code, ok_code, 'Usuário logado e vendedor, deve ter acesso a página de criação de item')
 
+    def test_cria_item(self):
+        data = {
+            'nome': 'Teste Item 1',
+            'descricao': 'Este é o item de teste 1',
+            'valor': 123456,
+            'quantidade': 2,
+            'vendedor': self.user,
+            'imagem': 'fotos/2021/07/30/scarlett.jpg'
+        }
+        setattr(self.request, 'session', 'session')
+        messages = FallbackStorage
+        self.request = self.factory.post('/loja/create/', data)
+        self.request.user = self.superuser
+        response = ItemCreateView.as_view()(self.request)
+        self.assertEquals(response.status_code, 200)
+
+
+
 
         # MOVER PARA TEST DE LOGIN
         # browser = webdriver.Chrome(ChromeDriverManager().install())
