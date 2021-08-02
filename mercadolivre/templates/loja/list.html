@@ -2,6 +2,9 @@
 {% load static %}
 
 {% block content %}
+<div class="container col-6 mt-3">
+    {% include 'partials/_alerts.html'%}
+</div>
 {% if request.path_info == '/' %}
 {% include 'loja/partials/_index_page.html' %}
 

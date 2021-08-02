@@ -9,13 +9,7 @@
         <h5 class="card-title">Criar novo Item</h5>
     </div>
     <div class="card-body">
-        {% if messages %}
-            {% for message in messages %}
-                <div class="alert alert-{{message.tags}}" role="alert">
-                    {{message}}
-                </div>
-            {% endfor %}
-        {% endif %}
+        {% include 'partials/_alerts.html'%}
         <form method="post" enctype="multipart/form-data">
             {% csrf_token %}
             {{form.as_p}}

@@ -5,21 +5,21 @@
 <div class="container col-8">
     <div class="row">
         {% for item in page_obj %}
-            <div class="card ms-3 mt-3" style="width: 20rem;">
-                <img src="/media/{{item.imagem}}" class="card-img-top" alt="{{media_root}}\{{item.imagem}}">
-                <div class="card-body">
-                    <h5 class="card-title">{{item.nome.title}}</h5>
-                    <p class="card-text">R${{item.valor}}</p>
-                    <div>
-                        <a href="{% url 'detalhe-item' item.id %}" class="btn btn-primary">Ver detalhes</a>
-                        <p>Vendido por: {{item.vendedor}}</p>
+                <div class="card ms-3 mt-3" style="width: 20rem;">
+                    <img src="/media/{{item.imagem}}" class="card-img-top mt-2" alt="{{media_root}}\{{item.imagem}}">
+                    <div class="card-body">
+                        <h5 class="card-title">{{item.nome.title}}</h5>
+                        <p class="card-text">R${{item.valor}}</p>
+                        <div>
+                            <a href="{% url 'detalhe-item' item.id %}" class="btn btn-primary">Ver detalhes</a>
+                            <p>Vendido por: {{item.vendedor}}</p>
+                        </div>
                     </div>
                 </div>
-            </div>
         {% endfor %}
     </div>
 
-<!--PAGINATOR    -->
+    <!--PAGINATOR    -->
 <nav aria-label="..." class="mt-3 ms-3">
     <ul class="pagination pagination-lg">
         {% if page_obj.has_previous %}

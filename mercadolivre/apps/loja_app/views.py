@@ -7,6 +7,7 @@ from django.shortcuts import redirect
 from django.views.generic import ListView, CreateView, DetailView, UpdateView, DeleteView
 from django.urls import reverse_lazy
 from django.contrib.messages.views import SuccessMessageMixin
+from django.forms import BaseModelForm
 
 from .models import ItensModel
 from apps.loja_app.forms import CreateItemForm
@@ -56,6 +57,10 @@ class ItemDetailView(DetailView):
     template_name = 'loja/detail.html'
     context_object_name = 'item'
 
+    def get_context_data(self, **kwargs: any) -> dict[str, any]:
+        context = super().get_context_data(**kwargs)
+        return context
+
 
 decorators = [
     permission_required(login_url='/user/login', perm='user_app.has_perm')
@@ -100,10 +105,18 @@ class ItemUpdateView(UpdateView):
     model = ItensModel
     template_name = 'loja/update.html'
     context_object_name = 'item'
-    fields = ('nome', 'descricao', 'valor', 'quantidade')
+    fields = ('nome', 'descricao', 'valor', 'quantidade', 'imagem')
 
     def get_success_url(self) -> str:
-        return reverse_lazy('detalhe-itens', kwargs={'pk': self.object.id})
+        return reverse_lazy('detalhe-item', kwargs={'pk': self.object.id})
+    
+    def get_context_data(self, **kwargs: any) -> dict[str, any]:
+        context = super().get_context_data(**kwargs)
+        if context['item'].vendedor.id != self.request.user.id:
+            messages.error(self.request, 'Você não tem permissão para alterar este item')
+            return {}
+        return context
+    
 
 
 @method_decorator(decorators, name='dispatch')

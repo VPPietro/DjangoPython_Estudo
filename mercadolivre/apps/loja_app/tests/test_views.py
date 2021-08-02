@@ -2,8 +2,9 @@ from apps.user_app.models import UserModel
 from django.test import TestCase, RequestFactory
 from django.contrib.auth.models import AnonymousUser
 from django.test import TestCase
+from django.contrib.messages.storage.fallback import FallbackStorage
 
-from apps.loja_app.views import ItemCreateView
+from apps.loja_app.views import ItemCreateView, ItemListView
 
 
 class LojaViewTest(TestCase):
@@ -51,18 +52,15 @@ class LojaViewTest(TestCase):
             'descricao': 'Este é o item de teste 1',
             'valor': 123456,
             'quantidade': 2,
-            'vendedor': self.user,
+            'vendedor': self.superuser,
             'imagem': 'fotos/2021/07/30/scarlett.jpg'
         }
-        setattr(self.request, 'session', 'session')
-        messages = FallbackStorage
-        self.request = self.factory.post('/loja/create/', data)
+        self.request = self.factory.post('/loja/create', data)
         self.request.user = self.superuser
+        setattr(self.request, 'session', 'session')
+        setattr(self.request, '_messages', FallbackStorage(self.request))
         response = ItemCreateView.as_view()(self.request)
         self.assertEquals(response.status_code, 200)
-
-
-
 
         # MOVER PARA TEST DE LOGIN
         # browser = webdriver.Chrome(ChromeDriverManager().install())
