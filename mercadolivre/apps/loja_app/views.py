@@ -81,10 +81,6 @@ class ItemCreateView(SuccessMessageMixin, CreateView):
         self.initial = {'vendedor': self.request.user.id}
         return super().get_initial()
 
-    def get_form(self, form_class=None):
-        """Return an instance of the form to be used in this view."""
-        return CreateItemForm(**self.get_form_kwargs())
-
     def form_valid(self, form: CreateItemForm) -> HttpResponse:
         form = CreateItemForm(self.request.POST, self.request.FILES)
         # Camada de segurança, impedir que usuário altere hiddenfield 'vendedor'. tem q criar mensagem?
@@ -111,12 +107,12 @@ class ItemUpdateView(UpdateView):
         return reverse_lazy('detalhe-item', kwargs={'pk': self.object.id})
     
     def get_context_data(self, **kwargs: any) -> dict[str, any]:
-        context = super().get_context_data(**kwargs)
-        if context['item'].vendedor.id != self.request.user.id:
+        self.context = super().get_context_data(**kwargs)
+        if self.context['item'].vendedor.id != self.request.user.id:
             messages.error(self.request, 'Você não tem permissão para alterar este item')
+            self.vendedor_incorreto = True
             return {}
-        return context
-    
+        return self.context
 
 
 @method_decorator(decorators, name='dispatch')
