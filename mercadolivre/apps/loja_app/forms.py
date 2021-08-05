@@ -1,11 +1,10 @@
+from django.db.models import fields
 from django.forms import ModelForm, TextInput, NumberInput, HiddenInput, FileInput, Textarea
 from apps.loja_app.models import ItensModel
 
 
 class CreateItemForm(ModelForm):
-
     class Meta:
-
         exclude = '',
         model = ItensModel
         widgets = {
@@ -16,3 +15,7 @@ class CreateItemForm(ModelForm):
             'imagem': FileInput(attrs={'class': 'form-control'}),
             'vendedor': HiddenInput(),
         }
+
+class UpdateItemForm(CreateItemForm):
+    class Meta(CreateItemForm.Meta):
+        exclude = 'vendedor',

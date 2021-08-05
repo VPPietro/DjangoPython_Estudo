@@ -1,16 +1,14 @@
 from django.contrib import messages
 from django.http import HttpResponse
-from django.core.paginator import EmptyPage, PageNotAnInteger, Paginator
 from django.utils.decorators import method_decorator
 from django.contrib.auth.decorators import permission_required
 from django.shortcuts import redirect
 from django.views.generic import ListView, CreateView, DetailView, UpdateView, DeleteView
 from django.urls import reverse_lazy
 from django.contrib.messages.views import SuccessMessageMixin
-from django.forms import BaseModelForm
 
 from .models import ItensModel
-from apps.loja_app.forms import CreateItemForm
+from apps.loja_app.forms import CreateItemForm, UpdateItemForm
 
 
 class ItemListView(ListView):
@@ -72,9 +70,9 @@ class ItemCreateView(SuccessMessageMixin, CreateView):
 
     model = ItensModel
     template_name = 'loja/create.html'
-    fields = ( 'nome', 'descricao', 'valor', 'quantidade', 'imagem')
     success_url = reverse_lazy('lista-itens-user')
     success_message = 'Cadastro realizado com sucesso'
+    form_class = CreateItemForm
 
     def get_initial(self) -> dict[str, any]:
         """Set initial values for fields"""
@@ -82,8 +80,7 @@ class ItemCreateView(SuccessMessageMixin, CreateView):
         return super().get_initial()
 
     def form_valid(self, form: CreateItemForm) -> HttpResponse:
-        form = CreateItemForm(self.request.POST, self.request.FILES)
-        # Camada de segurança, impedir que usuário altere hiddenfield 'vendedor'. tem q criar mensagem?
+        # Camada de segurança, impedir que usuário altere hiddenfield 'vendedor'
         if self.request.POST['vendedor'] != str(self.request.user.id):
             messages.error(self.request, 'Erro de formulário, tente novamente')
             return redirect('criar-itens')
@@ -91,7 +88,6 @@ class ItemCreateView(SuccessMessageMixin, CreateView):
 
     def form_invalid(self, form):
         """If the form is invalid, render the invalid form."""
-        form = CreateItemForm(self.request.POST, self.request.FILES)
         messages.error(self.request, 'Formulário inválido, corrija os erros abaixo')
         return self.render_to_response(self.get_context_data(form=form))
 
@@ -101,11 +97,9 @@ class ItemUpdateView(UpdateView):
     model = ItensModel
     template_name = 'loja/update.html'
     context_object_name = 'item'
-    fields = ('nome', 'descricao', 'valor', 'quantidade', 'imagem')
+    form_class = UpdateItemForm
+    success_url = '/sua_loja/'
 
-    def get_success_url(self) -> str:
-        return reverse_lazy('detalhe-item', kwargs={'pk': self.object.id})
-    
     def get_context_data(self, **kwargs: any) -> dict[str, any]:
         self.context = super().get_context_data(**kwargs)
         if self.context['item'].vendedor.id != self.request.user.id:
