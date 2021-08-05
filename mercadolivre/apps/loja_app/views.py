@@ -99,9 +99,12 @@ class ItemUpdateView(UpdateView):
     context_object_name = 'item'
     form_class = UpdateItemForm
     success_url = '/sua_loja/'
+    extra_context = {'title': 'Atualizar Item'}
 
     def get_context_data(self, **kwargs: any) -> dict[str, any]:
         self.context = super().get_context_data(**kwargs)
+        print(self.context['object'].imagem)
+        self.extra_context['foto'] = '/media/' + str(self.context['object'].imagem)
         if self.context['item'].vendedor.id != self.request.user.id:
             messages.error(self.request, 'Você não tem permissão para alterar este item')
             self.vendedor_incorreto = True
@@ -113,4 +116,4 @@ class ItemUpdateView(UpdateView):
 class ItemDeleteView(DeleteView):
     model = ItensModel
     template_name = 'loja/delete.html'
-    success_url = reverse_lazy('lista-itens')
+    success_url = reverse_lazy('lista-itens-user')
