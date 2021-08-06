@@ -15,7 +15,9 @@
             <div class="card-body">
                 <form method="post">
                     {% csrf_token %}
-                    <img src="{{foto}}" alt="">
+                    <div class="text-center">
+                    <img src="{{foto}}" width="300" class="border border-dark border-2 rounded">
+                    </div>
                     {{form.as_p}}
                     {% if messages %}
                         <button type="submit" class="btn btn-success" disabled>Atualizar</button>

@@ -21,7 +21,7 @@
             {% for item in itens %}
             {% if item.vendedor.id == user.id %}
             <tr>
-                <td><img src="/media/{{item.imagem}}" alt="not found" width="50" height="50"></td>
+                <td><img src="/media/{{item.imagem}}" alt="not found" width="100"></td>
                 <td>{{item.nome}}</td>
                 <td>{{item.descricao}}</td>
                 <td>{{item.valor}}</td>
