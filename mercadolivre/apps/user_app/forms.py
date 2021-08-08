@@ -1,5 +1,6 @@
-from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
-from django.forms import CharField, PasswordInput, Form, EmailField, EmailInput, TextInput
+from django.contrib.auth.forms import UserCreationForm, AuthenticationForm, UserChangeForm
+from django.forms import CharField, PasswordInput, EmailField, EmailInput, TextInput, Select
+from django.forms.fields import ChoiceField
 from apps.user_app.validators import *
 
 
@@ -59,33 +60,27 @@ class SignUpForm(UserCreationForm):
         }),
         )
 
-    # def clean_username(self):
-    #     username = self.cleaned_data.get('username')
-    #     lista_erros = {'username': []}
-    #     comprimento_minimo_username(username, lista_erros)
-    #     verifica_username_existente(username, lista_erros)
-    #     if lista_erros is not None:
-    #         for erro in lista_erros:
-    #             mensagem_erro = lista_erros[erro]
-    #             self.add_error(erro, mensagem_erro)
-    #     return self.cleaned_data
+    def clean(self):
+        # Clean username
+        username = self.cleaned_data['username']
+        lista_erros = {'username': []}
+        comprimento_minimo_username(username, lista_erros)
+        verifica_username_existente(username, lista_erros)
+        if lista_erros['username']:
+            for erro in lista_erros['username']:
+                self.add_error('username', erro)
 
-    # def clean_email(self):
-    #     email = self.cleaned_data.get('email')
-    #     print(self._errors)
-    #     lista_erros = {'email': []}
-    #     verifica_email_existente(email, lista_erros)
-    #     for erro in lista_erros:
-    #         mensagem_erro = lista_erros[erro]
-    #         self.add_error(erro, mensagem_erro)
+        # Clean email
+        email = self.cleaned_data.get('email')
+        lista_erros = {'email': []}
+        verifica_email_existente(email, lista_erros)
+        for erro in lista_erros['email']:
+            self.add_error('email', erro)
+        return self.cleaned_data
 
-    class Meta:
+    class Meta(UserCreationForm.Meta):
         model = UserModel
         fields = 'email', 'username', 'first_name', 'last_name'
-
-
-class SignUpForm2(UserCreationForm):
-    pass
 
 
 class LoginForm(AuthenticationForm):
@@ -99,8 +94,33 @@ class LoginForm(AuthenticationForm):
                                                             'id': 'passwordinput'}))
 
 
-class AlterUserForm(Form):
-    nome = CharField(label='Nome')
-    sobrenome = CharField(label='Sobrenome')
-    email = EmailField(label='E-mail')
-    senha = CharField(label='Confirme sua senha', widget=PasswordInput)
+class AlterUserForm(UserChangeForm):
+    CHOICES = ((True, 'Vendedor'), (False, 'Comprador'))
+    first_name = CharField(
+        label='Primeiro nome',
+        max_length=100,
+        widget=TextInput(attrs={
+            'class': 'form-control',
+            'id': 'fnameInput',
+            'placeholder': 'Primeiro Nome'
+        }))
+    last_name = CharField(
+        label='Último nome',
+        max_length=100,
+        widget=TextInput(attrs={
+            'class': 'form-control',
+            'id': 'lnameInput',
+            'placeholder': 'Último Nome'
+        }))
+    is_seller = ChoiceField(
+        label='Status do usuário',
+        choices=CHOICES,
+        widget=Select(attrs={
+            'class': 'form-control',
+            'id': 'statusUser',
+            'placehpçder': 'Status'
+        }))
+
+    class Meta(UserChangeForm.Meta):
+        model = UserModel
+        fields = 'first_name', 'last_name', 'is_seller'

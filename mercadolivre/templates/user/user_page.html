@@ -2,17 +2,13 @@
 {% load static %}
 {% load widget_tweaks %}
 
-{% block title %}User Info{% endblock %}
-
-{% block head %}
-<!-- <link rel="stylesheet" href="{% static 'user_app/user_page.css' %}"> -->
-{% endblock %}
 
 
 {% block content %}
 <h1 class="text-center mt-5 mb-4">User Info</h1>
 
 <section class="container col-4">
+    {% include 'partials/_alerts.html' %}
     <div class="mb-3 mt-3">
         <div class="mb-3">
             <strong>Nickname: </strong>{{user.username}}
@@ -29,8 +25,16 @@
         <div class="mb-3">
             <strong>Data de cadastro: </strong>{{user.date_joined}}
         </div>
+        <div class="mb-3">
+            <strong>Status de usuário: </strong>
+            {% if user.is_seller %}
+                Vendedor
+            {% else %}
+                Não vendedor
+            {% endif %}
+        </div>
     </div>
 
-    <a href="/user/alterinfo">Alterar informações</a>
+    <a href="{% url 'alter_user_info_page' user.id %}">Alterar informações</a>
 </section>
 {% endblock %}

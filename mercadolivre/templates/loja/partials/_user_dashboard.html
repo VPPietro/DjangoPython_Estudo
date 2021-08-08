@@ -1,40 +1,43 @@
 {% load static %}
 {% block content %}
 
-<div class="container">
-<table class="table">
-    <tr>
-        <thead class="thead-light">
-            <tr>
-                <th>img</th>
-                <th>nome</th>
-                <th>desc</th>
-                <th>valor</th>
-                <th>quantidade</th>
-                <th>vendedor</th>
-                <th>info</th>
-                <th>update</th>
-                <th>delete</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for item in itens %}
-            {% if item.vendedor.id == user.id %}
-            <tr>
-                <td><img src="/media/{{item.imagem}}" alt="not found" width="100"></td>
-                <td>{{item.nome}}</td>
-                <td>{{item.descricao}}</td>
-                <td>{{item.valor}}</td>
-                <td>{{item.quantidade}}</td>
-                <td>{{item.vendedor}}</td>
-                <td><a href="/loja/{{item.id}}" type="button" class="btn btn-info">Info</a></td>
-                <td><a href="/loja/{{item.id}}/update" type="button" class="btn btn-warning">Update</a></td>
-                <td><a href="/loja/{{item.id}}/delete" type="button" class="btn btn-danger">Delete</a></td>
-            </tr>
-            {% endif %}
-            {% endfor %}
-            <td><a type="button" class="btn btn-success" href="{% url 'criar-itens' %}">Criar</a></td>
-        </tbody>
-</table>
+<div class="container col-8">
+    {% if not user.is_seller %}
+        <div class="alert alert-danger" role="alert">Você deve ser vendedor para publicar produtos ou editar sua loja</div>
+    {% endif %}
+    <table class="table">
+        <tr>
+            <thead class="thead-light">
+                <tr>
+                    <th>img</th>
+                    <th>nome</th>
+                    <th>desc</th>
+                    <th>valor</th>
+                    <th>quantidade</th>
+                    <th>vendedor</th>
+                    <th>info</th>
+                    <th>update</th>
+                    <th>delete</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for item in itens %}
+                {% if item.vendedor.id == user.id %}
+                <tr>
+                    <td><img src="/media/{{item.imagem}}" alt="not found" width="100"></td>
+                    <td>{{item.nome}}</td>
+                    <td>{{item.descricao}}</td>
+                    <td>{{item.valor}}</td>
+                    <td>{{item.quantidade}}</td>
+                    <td>{{item.vendedor}}</td>
+                    <td><a href="/loja/{{item.id}}" type="button" class="btn btn-info">Info</a></td>
+                    <td><a href="/loja/{{item.id}}/update" type="button" class="btn btn-warning">Update</a></td>
+                    <td><a href="/loja/{{item.id}}/delete" type="button" class="btn btn-danger">Delete</a></td>
+                </tr>
+                {% endif %}
+                {% endfor %}
+                <td><a type="button" class="btn btn-success" href="{% url 'criar-itens' %}">Criar</a></td>
+            </tbody>
+    </table>
 </div>
 {% endblock %}

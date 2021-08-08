@@ -11,7 +11,7 @@
 {% block title %}Sign up{% endblock %}
 
 {% block content %}
-<main class="form-signin translate-middle position-absolute top-50 start-50 text-center" style="max-height: 70%;">
+<main class="form-signin container col-6 mt-5 text-center" style="max-height: 70%;">
     <form method="POST">
         <img class="mb-4" src="{% static 'img/logo.png' %}" alt="" width="72" height="72">
         <h1 class="h3 mb-3 fw-normal">Entre com suas informações para um novo cadastro</h1>
@@ -22,12 +22,13 @@
                     {{field.label_tag}}
             </div>
             {% if field.errors %}
-                <div class="alert alert-danger" role="alert">
-                    {{field.errors}}
-                </div>
+                {% for error in field.errors %}
+                    <div class="alert alert-danger" role="alert">
+                        {{error}}
+                    </div>
+                {% endfor %}
             {% endif %}
         {% endfor %}
-
         {% csrf_token %}
         <button class="w-100 btn btn-lg btn-primary mt-5" type="submit">Cadastrar</button>
         <p class="mt-5 mb-3 text-muted">© Eshop</p>

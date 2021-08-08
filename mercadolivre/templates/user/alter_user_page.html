@@ -2,29 +2,23 @@
 {% load static %}
 
 
-{% block title %}Alterar cadastro{% endblock %}
 
-{% block head %}
-<link rel="stylesheet" href="{% static 'user_app/user_page.css' %}">
-{% endblock %}
+
 
 
 {% block content %}
-<h1>Alterar cadastro</h1>
-
-<ul id="userinfolist">
+<h1 class="text-center mt-5">Alterar cadastro</h1>
+<main class="form-signin container col-3 mt-5 text-center" style="max-height: 50%;">
     <form method="POST">
-        {% for x in form %}
-        <li>
-            {{x}}
-        </li>
+        {%include 'partials/_alerts.html'%}
+        {% for field in form %}
+            <div class="form-floating">
+                    {{field}}
+                    {{field.label_tag}}
+            </div>
         {% endfor %}
-        {% if errors %}
-        <div id="senhaincorreta" class="errorlist"></div>
-        {% endif %}
         {% csrf_token %}
-        <input type="submit" value="enviar">
+        <button class="w-100 btn btn-lg btn-primary mt-5" type="submit" id="submitbtn">Alterar</button>
     </form>
-</ul>
-<script type="text/javascript" src="{% static 'user_app/alter_user_page.js' %}"></script>
+</main>
 {% endblock %}

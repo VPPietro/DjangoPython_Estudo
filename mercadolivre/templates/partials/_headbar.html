@@ -98,7 +98,7 @@
                 <a class="nav-link dropdown-toggle" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Logado como: {{request.user}}</a>
                 <div class="dropdown-menu" aria-labelledby="navbarDropdown">
                     <a class="dropdown-item" href="{% url 'lista-itens-user' %}">Sua Loja</a>
-                    <a class="dropdown-item" href="{% url 'user_info_page' %}">Informações do Usuario</a>
+                    <a class="dropdown-item" href="{% url 'user_info_page' user.id %}">Informações do Usuario</a>
                     {% if user.is_superuser %}
                     <a class="dropdown-item" href="/admin">ADMIN</a>
                     {% endif %}

@@ -11,7 +11,7 @@ from .models import ItensModel
 from apps.loja_app.forms import CreateItemForm, UpdateItemForm
 
 decorators = [
-    permission_required(login_url='/user/login', perm='user_app.has_perm')
+    permission_required(login_url=reverse_lazy('lista-itens-user'), perm='user_app.has_perm')
     ]
 
 
@@ -58,7 +58,7 @@ class ItemCreateView(SuccessMessageMixin, CreateView):
 
 
 @method_decorator(decorators, name='dispatch')
-class ItemUpdateView(UpdateView):
+class ItemUpdateView(UpdateView):  # A foto do item não atualiza
     model = ItensModel
     template_name = 'loja/update.html'
     context_object_name = 'item'
@@ -77,7 +77,6 @@ class ItemUpdateView(UpdateView):
         self.context = super().get_context_data(**kwargs)
         if self.context['item'].vendedor.id != self.request.user.id:
             messages.error(self.request, 'Você não tem permissão para alterar este item')
-            self.vendedor_incorreto = True
             return {}
         return self.context
 
