@@ -1,5 +1,5 @@
 from django.contrib import messages
-from django.http import HttpResponse
+from django.http import HttpResponse, HttpRequest
 from django.utils.decorators import method_decorator
 from django.contrib.auth.decorators import permission_required
 from django.shortcuts import redirect
@@ -10,6 +10,10 @@ from django.contrib.messages.views import SuccessMessageMixin
 from .models import ItensModel
 from apps.loja_app.forms import CreateItemForm, UpdateItemForm
 
+decorators = [
+    permission_required(login_url='/user/login', perm='user_app.has_perm')
+    ]
+
 
 class ItemListView(ListView):
 
@@ -19,50 +23,11 @@ class ItemListView(ListView):
     context_object_name = 'itens'
     ordering = ['-id']  # item mais recente primeiro
 
-    def get_context_data(self, *, object_list=None, **kwargs):
-        """Herdando do get context Data padrão + acrescentando quantidade de itens mostrado
-        por coluna na index e dashboard"""
-        # Herdando o context original:
-        context = super(ItemListView, self).get_context_data(**kwargs)
-        return context
-        # Separando itens em listas dentro da lista original de context['itens']
-        # quantidade_por_linha = 10
-        # lista_parcial = []
-        # start = -quantidade_por_linha
-        # for i in range(int(len(context['itens']) / quantidade_por_linha) + 1):
-        #     start = start + quantidade_por_linha
-        #     end = start + quantidade_por_linha
-        #     lista_parcial.append(context['itens'][start:end])
-        # context['itens'] = lista_parcial
-        # return context
-
-        # ** CASO PRECISE ADICIONAR UM PAGINADOR **
-        # itens = self.get_queryset()
-        # page = self.request.GET.get('page')
-        # paginator = Paginator(itens, self.paginate_by)
-        # try:
-        #     itens = paginator.page(page)
-        # except PageNotAnInteger:
-        #     itens = paginator.page(1)
-        # except EmptyPage:
-        #     itens = paginator.page(paginator.num_pages)
-        # context['itens'] = itens
-        # return context
-
 
 class ItemDetailView(DetailView):
     model = ItensModel
     template_name = 'loja/detail.html'
     context_object_name = 'item'
-
-    def get_context_data(self, **kwargs: any) -> dict[str, any]:
-        context = super().get_context_data(**kwargs)
-        return context
-
-
-decorators = [
-    permission_required(login_url='/user/login', perm='user_app.has_perm')
-    ]
 
 
 @method_decorator(decorators, name='dispatch')
@@ -74,7 +39,7 @@ class ItemCreateView(SuccessMessageMixin, CreateView):
     success_message = 'Cadastro realizado com sucesso'
     form_class = CreateItemForm
 
-    def get_initial(self) -> dict[str, any]:
+    def get_initial(self):
         """Set initial values for fields"""
         self.initial = {'vendedor': self.request.user.id}
         return super().get_initial()
@@ -99,12 +64,17 @@ class ItemUpdateView(UpdateView):
     context_object_name = 'item'
     form_class = UpdateItemForm
     success_url = '/sua_loja/'
-    extra_context = {'title': 'Atualizar Item'}
+    extra_context = {}
 
-    def get_context_data(self, **kwargs: any) -> dict[str, any]:
+    def setup(self, request: HttpRequest, *args: any, **kwargs: any) -> None:
+        """Inclui foto do item para visualização da foto atual"""
+        imagem = ItensModel.objects.get(id=kwargs['pk']).imagem
+        self.extra_context['foto'] = '/media/' + str(imagem)
+        return super().setup(request, *args, **kwargs)
+
+    def get_context_data(self, **kwargs: any):
+        """Camada de segurança que não permite o vendedor alterar qualquer item que não seja dele."""
         self.context = super().get_context_data(**kwargs)
-        print(self.context['object'].imagem)
-        self.extra_context['foto'] = '/media/' + str(self.context['object'].imagem)
         if self.context['item'].vendedor.id != self.request.user.id:
             messages.error(self.request, 'Você não tem permissão para alterar este item')
             self.vendedor_incorreto = True

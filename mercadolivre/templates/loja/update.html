@@ -16,13 +16,15 @@
                 <form method="post">
                     {% csrf_token %}
                     <div class="text-center">
-                    <img src="{{foto}}" width="300" class="border border-dark border-2 rounded">
+                    <label for="foto_do_item">Imagem atual do produto:</label>
+                    <img id="foto_do_item" src="{{foto}}" width="300" class="border border-dark border-2 rounded">
                     </div>
                     {{form.as_p}}
                     {% if messages %}
                         <button type="submit" class="btn btn-success" disabled>Atualizar</button>
                     {% else %}
                         <button type="submit" class="btn btn-success">Atualizar</button>
+                        <label for="id_imagem">Selecione uma nova imagem, ou deixe em branco para manter a atual.</label>
                     {% endif %}
                 </form>
             </div>

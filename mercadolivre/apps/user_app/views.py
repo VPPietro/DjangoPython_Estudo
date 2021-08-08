@@ -1,23 +1,26 @@
+from apps.user_app.models import UserModel
 from django.contrib.auth import authenticate, login, logout, get_user
+from django.contrib.auth.views import LoginView
 from django.contrib import messages
 from django.shortcuts import redirect, render
+from django.urls import reverse_lazy
+from django.conf import settings
+from django.views.generic.edit import CreateView
 from .forms import AlterUserForm, SignUpForm, LoginForm
 
 
-def login_view(request):
-    form = LoginForm()
-    usuario = get_user(request)
-    if usuario.is_anonymous:
-        if request.method == 'POST':
-            form = LoginForm(request.POST)
-            if form.is_valid():
-                user = authenticate(request, username=form['username'].value(), password=form['password'].value())
-                if user is not None:
-                    login(request, user)
-                    return redirect('/')
-                else:
-                    messages.error(request, 'E-mail e/ou senha inválido(s)')
-    return render(request, 'user/login_page.html', {'form': form})
+class LoginClassView(LoginView):  # Criar mensagens de erro ou falhas
+    template_name = 'user/login_page.html'
+    authentication_form = LoginForm
+    redirect_authenticated_user = True
+    settings.LOGIN_REDIRECT_URL = reverse_lazy('lista-itens-user')
+
+
+class SignUpClassView(CreateView):  # Remover mensagem 'User model com este E-mail já existe.'
+    model = UserModel
+    template_name = 'user/signup_page.html'
+    form_class = SignUpForm
+    success_url = reverse_lazy('login_page')
 
 
 def signup(request):
