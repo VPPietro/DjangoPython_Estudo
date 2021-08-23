@@ -62,11 +62,6 @@ class UpdateUserInfoClassView(UpdateView):
         self.initial['is_seller'] = [True if usuario.is_seller else False]
         return super().get_initial()
 
-    def get_context_data(self, **kwargs: any):
-        context = super().get_context_data(**kwargs)
-        print(context['form']['password'])
-        return context
-
     def get_success_url(self) -> str:
         user_id = self.kwargs['pk']
         return reverse_lazy('user_info_page', kwargs={'pk': user_id})
