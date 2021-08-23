@@ -1,11 +1,6 @@
 from django.test import TestCase, RequestFactory
-from django.contrib.auth.models import AnonymousUser
-from selenium import webdriver
-from selenium.webdriver.common.keys import Keys
-from webdriver_manager.chrome import ChromeDriverManager
 
 from apps.loja_app.models import ItensModel
-from apps.loja_app.views import ItemCreateView
 from apps.user_app.models import UserModel
 
 

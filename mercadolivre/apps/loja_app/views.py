@@ -1,7 +1,7 @@
 from django.contrib import messages
 from django.http import HttpResponse, HttpRequest
 from django.utils.decorators import method_decorator
-from django.contrib.auth.decorators import permission_required
+from django.contrib.auth.decorators import login_required, permission_required
 from django.shortcuts import redirect
 from django.views.generic import ListView, CreateView, DetailView, UpdateView, DeleteView
 from django.urls import reverse_lazy
@@ -10,9 +10,9 @@ from django.contrib.messages.views import SuccessMessageMixin
 from .models import ItensModel
 from apps.loja_app.forms import CreateItemForm, UpdateItemForm
 
-decorators = [
-    permission_required(login_url=reverse_lazy('lista-itens-user'), perm='user_app.has_perm')
-    ]
+decorator = [
+    permission_required(login_url=reverse_lazy('login_page'), perm='user_app.has_perm')
+]
 
 
 class ItemListView(ListView):
@@ -30,7 +30,7 @@ class ItemDetailView(DetailView):
     context_object_name = 'item'
 
 
-@method_decorator(decorators, name='dispatch')
+@method_decorator(decorator, name='dispatch')
 class ItemCreateView(SuccessMessageMixin, CreateView):
 
     model = ItensModel
@@ -57,7 +57,7 @@ class ItemCreateView(SuccessMessageMixin, CreateView):
         return self.render_to_response(self.get_context_data(form=form))
 
 
-@method_decorator(decorators, name='dispatch')
+@method_decorator(login_required(login_url='login_page'), name='dispatch')
 class ItemUpdateView(UpdateView):  # A foto do item não atualiza
     model = ItensModel
     template_name = 'loja/update.html'
@@ -81,7 +81,7 @@ class ItemUpdateView(UpdateView):  # A foto do item não atualiza
         return self.context
 
 
-@method_decorator(decorators, name='dispatch')
+@method_decorator(decorator, name='dispatch')
 class ItemDeleteView(DeleteView):
     model = ItensModel
     template_name = 'loja/delete.html'

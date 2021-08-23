@@ -1,6 +1,7 @@
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm, UserChangeForm
 from django.forms import CharField, PasswordInput, EmailField, EmailInput, TextInput, Select
 from django.forms.fields import ChoiceField
+from django.forms.widgets import HiddenInput
 from apps.user_app.validators import *
 
 
@@ -84,17 +85,18 @@ class SignUpForm(UserCreationForm):
 
 
 class LoginForm(AuthenticationForm):
-    username = EmailField(label='E-mail', widget=EmailInput(attrs=
-                                                            {'class': 'form-control',
-                                                            'placeholder': 'nome@dominio.com.br',
-                                                            'id': 'emailinput'}))
-    password = CharField(label='Senha', widget=PasswordInput(attrs=
-                                                            {'class': 'form-control',
-                                                            'placeholder': 'Senha',
-                                                            'id': 'passwordinput'}))
+    username = EmailField(label='E-mail', widget=EmailInput(attrs={'class': 'form-control',
+        'placeholder': 'nome@dominio.com.br',
+        'id': 'emailinput'}))
+    password = CharField(label='Senha', widget=PasswordInput(attrs={'class': 'form-control',
+        'placeholder': 'Senha',
+        'id': 'passwordinput'}))
 
 
 class AlterUserForm(UserChangeForm):
+
+    use_required_attribute = False
+
     CHOICES = ((True, 'Vendedor'), (False, 'Comprador'))
     first_name = CharField(
         label='Primeiro nome',

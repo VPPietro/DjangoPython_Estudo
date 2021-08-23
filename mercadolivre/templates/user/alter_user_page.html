@@ -11,12 +11,12 @@
 <main class="form-signin container col-3 mt-5 text-center" style="max-height: 50%;">
     <form method="POST">
         {%include 'partials/_alerts.html'%}
-        {% for field in form %}
-            <div class="form-floating">
-                    {{field}}
-                    {{field.label_tag}}
-            </div>
-        {% endfor %}
+            {% for field in form %}
+                <div class="form-floating">
+                        {{field}}
+                        {{field.label_tag}}
+                </div>
+            {% endfor %}
         {% csrf_token %}
         <button class="w-100 btn btn-lg btn-primary mt-5" type="submit" id="submitbtn">Alterar</button>
     </form>
