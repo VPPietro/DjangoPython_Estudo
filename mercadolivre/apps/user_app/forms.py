@@ -1,7 +1,6 @@
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm, UserChangeForm
-from django.forms import CharField, PasswordInput, EmailField, EmailInput, TextInput, Select
+from django.forms import CharField, PasswordInput, EmailField, EmailInput, TextInput, Select, Form
 from django.forms.fields import ChoiceField
-from django.forms.widgets import HiddenInput
 from apps.user_app.validators import *
 
 
@@ -123,6 +122,6 @@ class AlterUserForm(UserChangeForm):
             'placehpçder': 'Status'
         }))
 
-    class Meta(UserChangeForm.Meta):
+    class Meta:
         model = UserModel
         fields = 'first_name', 'last_name', 'is_seller'

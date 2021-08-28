@@ -13,8 +13,10 @@
         {%include 'partials/_alerts.html'%}
             {% for field in form %}
                 <div class="form-floating">
+                    {% if field.auto_id != 'id_password' %}
                         {{field}}
                         {{field.label_tag}}
+                    {% endif %}
                 </div>
             {% endfor %}
         {% csrf_token %}
