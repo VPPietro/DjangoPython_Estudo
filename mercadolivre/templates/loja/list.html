@@ -5,7 +5,7 @@
 <div class="container col-6 mt-3">
     {% include 'partials/_alerts.html'%}
 </div>
-{% if request.path_info == '/' %}
+{% if request.path_info == '/' or request.user.is_anonymous %}
 {% include 'loja/partials/_index_page.html' %}
 
 {% else %}

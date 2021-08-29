@@ -1,27 +1,34 @@
 from django.test import TestCase, RequestFactory
 
-from apps.loja_app.models import ItensModel
 from apps.user_app.models import UserModel
-
+from apps.loja_app.models import ItensModel
 
 class LojaModelsTest(TestCase):
 
     def setUp(self):
         self.request = RequestFactory()
+        self.vendedor = UserModel.objects.create_superuser(
+                email='supertest@gmail.com',
+                username='superTest',
+                password='123123123a',
+                first_name= 'Super',
+                last_name= 'Test',
+                is_seller= True,
+            )
 
-    def cria_item(self, nome: str, descricao: str, valor: float, quantidade: int, vendedor: UserModel, imagem: str) -> ItensModel:
-        return ItensModel.objects.create(nome=nome, descricao=descricao, valor=valor, quantidade=quantidade, vendedor=vendedor, imagem=imagem)
-
-    def criacao_item(self):
-        i = self.cria_item('nome do produto',
-            'descricao do produto',
-            1500,
-            12,
-            UserModel.objects.get(id=1),
-            'img/no_foto_item.png')
-        self.assertTrue(isinstance(i, ItensModel))
-        self.assertEqual(i.nome, 'nome do produto')
-        self.assertEqual(i.descricao, 'descricao do produto')
-        self.assertEqual(i.valor, 1500)
-        self.assertEqual(i.quantidade, 12)
-        self.assertEqual(i.imagem, 'img/no_foto_item.png')
+    def test_cria_item(self):
+        """Teste para se certificar que um item pode ser criado"""
+        item = ItensModel.objects.create(
+            nome = 'Teste Item 1',
+            descricao =  'Este é o item de teste 1',
+            valor = 123456,
+            quantidade = 2,
+            vendedor = self.vendedor,
+            imagem = 'fotos/2021/07/30/scarlett.jpg'
+        )
+        self.assertEqual(item.nome, 'Teste Item 1')
+        self.assertEqual(item.descricao, 'Este é o item de teste 1')
+        self.assertEqual(item.valor, 123456)
+        self.assertEqual(item.quantidade, 2)
+        self.assertEqual(item.vendedor, self.vendedor)
+        self.assertEqual(item.imagem, 'fotos/2021/07/30/scarlett.jpg')

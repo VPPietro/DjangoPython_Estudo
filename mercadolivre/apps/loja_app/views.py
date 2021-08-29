@@ -11,7 +11,8 @@ from .models import ItensModel
 from apps.loja_app.forms import CreateItemForm, UpdateItemForm
 
 decorator = [
-    permission_required(login_url=reverse_lazy('login_page'), perm='user_app.has_perm')
+    login_required(login_url=reverse_lazy('login_page')),
+    permission_required(login_url=reverse_lazy('lista-itens-user'), perm='user_app.has_perm')
 ]
 
 
@@ -79,6 +80,10 @@ class ItemUpdateView(UpdateView):  # A foto do item não atualiza
             messages.error(self.request, 'Você não tem permissão para alterar este item')
             return {}
         return self.context
+
+    # def form_valid(self, form: ItensModel) -> HttpResponse:
+    #     print(self.request.__dict__)
+    #     return super().form_valid(form)
 
 
 @method_decorator(decorator, name='dispatch')
