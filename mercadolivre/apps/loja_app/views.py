@@ -37,7 +37,7 @@ class ItemCreateView(SuccessMessageMixin, CreateView):
     model = ItensModel
     template_name = 'loja/create.html'
     success_url = reverse_lazy('lista-itens-user')
-    success_message = 'Cadastro realizado com sucesso'
+    success_message = 'Produto cadastrado com sucesso'
     form_class = CreateItemForm
 
     def get_initial(self):
@@ -91,3 +91,19 @@ class ItemDeleteView(DeleteView):
     model = ItensModel
     template_name = 'loja/delete.html'
     success_url = reverse_lazy('lista-itens-user')
+
+    def setup(self, request: HttpRequest, *args: any, **kwargs: any) -> None:
+        self.request = request
+        self.kwargs = kwargs
+        item = ItensModel.objects.get(id=self.kwargs['pk'])
+        if not item.vendedor == self.request.user:
+            print('sem permissao')
+            messages.error(request, 'Você não tem permissão para deletar este item')
+            return 0
+        return super().setup(request, *args, **kwargs)
+
+    # def post(self, request: HttpRequest, *args: str, **kwargs: any) -> HttpResponse:
+    #     item = ItensModel.objects.get(id=self.kwargs['pk'])
+    #     if not item.vendedor == self.request.user:
+    #         return None
+    #     return super().post(request, *args, **kwargs)
