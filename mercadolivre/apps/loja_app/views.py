@@ -81,10 +81,6 @@ class ItemUpdateView(UpdateView):  # A foto do item não atualiza
             return {}
         return self.context
 
-    # def form_valid(self, form: ItensModel) -> HttpResponse:
-    #     print(self.request.__dict__)
-    #     return super().form_valid(form)
-
 
 @method_decorator(decorator, name='dispatch')
 class ItemDeleteView(DeleteView):
@@ -99,11 +95,5 @@ class ItemDeleteView(DeleteView):
         if not item.vendedor == self.request.user:
             print('sem permissao')
             messages.error(request, 'Você não tem permissão para deletar este item')
-            return 0
+            return redirect(reverse_lazy('index_page'))
         return super().setup(request, *args, **kwargs)
-
-    # def post(self, request: HttpRequest, *args: str, **kwargs: any) -> HttpResponse:
-    #     item = ItensModel.objects.get(id=self.kwargs['pk'])
-    #     if not item.vendedor == self.request.user:
-    #         return None
-    #     return super().post(request, *args, **kwargs)
