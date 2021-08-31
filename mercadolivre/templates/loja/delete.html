@@ -15,7 +15,7 @@
             <div class="alert alert-warning" role="alert">
                 Tem certeza que deseja deletar o Item: <strong>{{ object }}</strong> ?
             </div>
-            {% if alert %}
+            {% if messages %}
                 <button type="submit" class="btn btn-danger" disabled>Deletar</button>
             {% else %}
                 <button type="submit" class="btn btn-danger">Deletar</button>

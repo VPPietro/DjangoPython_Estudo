@@ -1,5 +1,6 @@
 from django.contrib import messages
 from django.http import HttpResponse, HttpRequest
+from django.http.response import HttpResponseRedirect
 from django.utils.decorators import method_decorator
 from django.contrib.auth.decorators import login_required, permission_required
 from django.shortcuts import redirect
@@ -91,9 +92,16 @@ class ItemDeleteView(DeleteView):
     def setup(self, request: HttpRequest, *args: any, **kwargs: any) -> None:
         self.request = request
         self.kwargs = kwargs
-        item = ItensModel.objects.get(id=self.kwargs['pk'])
-        if not item.vendedor == self.request.user:
+        self.item = ItensModel.objects.get(id=self.kwargs['pk'])
+        # if not self.item.vendedor == self.request.user:
+        #     print('sem permissao')
+        #     messages.error(request, 'Você não tem permissão para deletar este item')
+        #     return HttpResponseRedirect(reverse_lazy('index_page'))
+        return super().setup(request, *args, **kwargs)
+
+    def delete(self, request, *args, **kwargs):
+        if not self.item.vendedor == self.request.user:
             print('sem permissao')
             messages.error(request, 'Você não tem permissão para deletar este item')
-            return redirect(reverse_lazy('index_page'))
-        return super().setup(request, *args, **kwargs)
+            return HttpResponseRedirect(reverse_lazy('index_page'))
+        return super().delete(self, request, *args, **kwargs)

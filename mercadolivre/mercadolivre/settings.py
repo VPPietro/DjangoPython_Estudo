@@ -83,7 +83,7 @@ DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'ml_db',
-        'USER': 'root2',
+        'USER': 'root',
         'PASSWORD': 'toor',
         'HOST': 'localhost',
     }
