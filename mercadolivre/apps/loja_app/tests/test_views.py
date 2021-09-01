@@ -1,7 +1,7 @@
-from django.http import response
 from django.test import TestCase, RequestFactory
 from django.contrib.auth.models import AnonymousUser
 from django.test import TestCase
+from django.contrib.messages.storage.cookie import CookieStorage
 
 from apps.user_app.models import UserModel
 from apps.loja_app.models import ItensModel
@@ -9,7 +9,7 @@ from apps.loja_app.views import ItemCreateView, ItemUpdateView, ItemDeleteView
 from apps.loja_app.forms import UpdateItemForm
 
 def setup_std(self, factory=False, vendedor1=False, vendedor2=False, user=False, item=False):
-    """Define valores padrões para as classes de teste"""
+    """Define valores padrões para as classes de teste, self.request já deve estar definida"""
     self.factory = RequestFactory() if factory else None
     self.vendedor1 = UserModel.objects.create_superuser(
         email='supertest@gmail.com',
@@ -17,32 +17,28 @@ def setup_std(self, factory=False, vendedor1=False, vendedor2=False, user=False,
         password='123123123a',
         first_name= 'Super',
         last_name= 'Test',
-        is_seller= True,
-        ) if vendedor1 else None
+        is_seller= True,) if vendedor1 else None
     self.vendedor2 = UserModel.objects.create_superuser(
         email='supertest2@gmail.com',
         username='superTest2',
         password='123123123a',
         first_name= 'Super2',
         last_name= 'Test2',
-        is_seller= True,
-        ) if vendedor2 else None
+        is_seller= True,) if vendedor2 else None
     self.user = UserModel.objects.create_user(
-                email='usertest@gmail.com',
-                username='userTest',
-                password='123123123a',
-                first_name= 'User',
-                last_name= 'Test',
-                is_seller= False,
-            ) if user else None
+        email='usertest@gmail.com',
+        username='userTest',
+        password='123123123a',
+        first_name= 'User',
+        last_name= 'Test',
+        is_seller= False,) if user else None
     self.item = ItensModel.objects.create(
         nome = 'Teste Item 1',
         descricao =  'Este é o item de teste 1',
         valor = 123456,
         quantidade = 2,
         vendedor = self.vendedor1,
-        imagem = 'fotos/2021/07/30/scarlett.jpg'
-        ) if item else None
+        imagem = 'fotos/2021/07/30/scarlett.jpg') if item else None
 
 
 class LojaCreateTest(TestCase):
@@ -57,41 +53,49 @@ class LojaCreateTest(TestCase):
         e se em seguida é redirecionado para tela de login"""
         self.request.user = AnonymousUser()
         response = ItemCreateView.as_view()(self.request)
-        self.assertIn(response.status_code, self.redirect_code, 'Usuário anonimo não deve ter acesso a página de criação de item')
-        self.assertIn('user/login', response.url, 'usuario não logado deve ser redirecionado para a tela de login')
+        self.assertIn(response.status_code, self.redirect_code,
+            'Usuário anonimo não deve ter acesso a página de criação de item')
+        self.assertIn('user/login', response.url,
+            'usuario não logado deve ser redirecionado para a tela de login')
 
     def test_redireciona_nao_vendedor(self):
         """Teste para se sertificar que usuario que não tem flag de vendedor acesse a página de criação de item,
         e em seguida é redirecionado para a tela de sua_loja"""
         self.request.user = self.user
         response = ItemCreateView.as_view()(self.request)
-        self.assertIn(response.status_code, self.redirect_code, 'Usuário que não é vendedor também não deve ter acesso a página de criação de item')
-        self.assertIn('sua_loja', response.url, 'usuario logado porem comprador, deve ser redirecionado para tela de sua_loja')
+        self.assertIn(response.status_code, self.redirect_code,
+            'Usuário que não é vendedor também não deve ter acesso a página de criação de item')
+        self.assertIn('sua_loja', response.url,
+            'usuario logado porem comprador, deve ser redirecionado para tela de sua_loja')
 
     def test_acesso_vendedor_pag_create(self):
         """Teste para se certificar que usuario logado com flag de vendedor tenha acesso a pagina de criação de item"""
         self.request.user = self.vendedor1
         response = ItemCreateView.as_view()(self.request)
         ok_code = list(range(200, 300))
-        self.assertIn(response.status_code, ok_code, 'Usuário logado e vendedor, deve ter acesso a página de criação de item')
+        self.assertIn(response.status_code, ok_code,
+            'Usuário logado e vendedor, deve ter acesso a página de criação de item')
 
 
 class LojaUpdateTest(TestCase):
 
     def setUp(self):
-        setup_std(self, factory=True, vendedor1=True, item=True)
-
-    def test_vendedor_atualiza_item(self):
-        """Teste para se certificar se o vendedor criador do item consegue alterar as informações corretamente"""
-        # Altera valores do item
-        data = {'nome': 'Novo Item 2',
+        setup_std(self, factory=True, vendedor1=True, vendedor2=True, item=True)
+        self.data = {
+            'nome': 'Novo Item 2',
             'descricao': 'Este é o segundo item',
             'valor': 654321,
             'quantidade': 4,}
-        self.request = self.factory.post('/loja/create/', data=data)
+        self.request = self.factory.post('/loja/create/', data=self.data)
+        self.request._messages = CookieStorage(self.request)  # remove as messages da request
+
+    def test_vendedor_atualiza_seu_proprio_item(self):
+        """Teste para se certificar se o vendedor criador do item consegue alterar as informações corretamente"""
+        # Altera valores do item
+        self.assertEqual(self.item.nome, 'Teste Item 1')
         self.request.user = self.vendedor1
         response = ItemUpdateView.as_view()(self.request, pk=self.item.id)
-        form = UpdateItemForm(data)
+        form = UpdateItemForm(self.data)
         self.assertTrue(form.is_valid())
         self.assertEqual(response.status_code, 302)
 
@@ -102,12 +106,27 @@ class LojaUpdateTest(TestCase):
         self.assertEqual(self.item.valor, 654321)
         self.assertEqual(self.item.vendedor, self.vendedor1)
 
+    def test_vendedor_nao_consegue_alterar_outro_item(self):
+        """Teste para se certificar que o vendedor2 não pode alterar um item do vendedor1"""
+        # Vendedor2 manda a request para alterar os valores do item do vendedor1
+        self.request.user = self.vendedor2
+        response = ItemUpdateView.as_view()(self.request, pk=self.item.id)
+        form = UpdateItemForm(self.data)
+        self.assertTrue(form.is_valid())
+        self.assertEqual(response.status_code, 302)
+        # Verifica se o item do vendedor1 se manteve inalterado
+        self.item = ItensModel.objects.get(id=self.item.id)
+        self.assertEqual(self.item.nome, 'Teste Item 1')
+        self.assertEqual(self.item.descricao, 'Este é o item de teste 1')
+        self.assertEqual(self.item.valor, 123456)
+        self.assertEqual(self.item.vendedor, self.vendedor1)
 
 class LojaDeleteTest(TestCase):
 
     def setUp(self):
         setup_std(self, factory=True, vendedor1=True, vendedor2=True, item=True)
         self.request = self.factory.post('/loja/delete')
+        self.request._messages = CookieStorage(self.request)  # remove as messages da request
 
     def test_nao_exclui_item_caso_nao_seja_dono_do_item(self):
         """Neste teste, o vendedor2 esta tentando excluir o item que pertence ao vendedor1, o vendedor2 não pode obter sucesso."""

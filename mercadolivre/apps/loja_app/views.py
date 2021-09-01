@@ -8,7 +8,7 @@ from django.views.generic import ListView, CreateView, DetailView, UpdateView, D
 from django.urls import reverse_lazy
 from django.contrib.messages.views import SuccessMessageMixin
 
-from .models import ItensModel
+from apps.loja_app.views_func import *
 from apps.loja_app.forms import CreateItemForm, UpdateItemForm
 
 decorator = [
@@ -72,6 +72,7 @@ class ItemUpdateView(UpdateView):  # A foto do item não atualiza
         """Inclui foto do item para visualização da foto atual"""
         imagem = ItensModel.objects.get(id=kwargs['pk']).imagem
         self.extra_context['foto'] = '/media/' + str(imagem)
+        setup_std(self, kwargs, request, pk=True, item=True, permi_vend=True)
         return super().setup(request, *args, **kwargs)
 
     def get_context_data(self, **kwargs: any):
@@ -82,26 +83,33 @@ class ItemUpdateView(UpdateView):  # A foto do item não atualiza
             return {}
         return self.context
 
+    def post(self, request: HttpRequest, *args: str, **kwargs: any) -> HttpResponse:
+        if not self.permissao_vendedor:
+            messages.error(self.request, 'Você não tem permissão para alterar este item')
+            return HttpResponseRedirect(reverse_lazy('index_page'))
+        return super().post(request, *args, **kwargs)
+
 
 @method_decorator(decorator, name='dispatch')
 class ItemDeleteView(DeleteView):
     model = ItensModel
     template_name = 'loja/delete.html'
     success_url = reverse_lazy('lista-itens-user')
+    context_object_name = 'object'
 
     def setup(self, request: HttpRequest, *args: any, **kwargs: any) -> None:
-        self.request = request
-        self.kwargs = kwargs
-        self.item = ItensModel.objects.get(id=self.kwargs['pk'])
-        # if not self.item.vendedor == self.request.user:
-        #     print('sem permissao')
-        #     messages.error(request, 'Você não tem permissão para deletar este item')
-        #     return HttpResponseRedirect(reverse_lazy('index_page'))
+        setup_std(self, kwargs, request, pk=True, item=True, permi_vend=True)
         return super().setup(request, *args, **kwargs)
 
+    # Remove contexto da request caso o vendedor não tenha permissão
+    def get_context_data(self, **kwargs: any) -> dict[str, any]:
+        if not self.permissao_vendedor:
+            return {}
+        return super().get_context_data(**kwargs)
+
+    # Não permite deletar item que não seja do vendedor
     def delete(self, request, *args, **kwargs):
-        if not self.item.vendedor == self.request.user:
-            print('sem permissao')
+        if not self.permissao_vendedor:
             messages.error(request, 'Você não tem permissão para deletar este item')
             return HttpResponseRedirect(reverse_lazy('index_page'))
         return super().delete(self, request, *args, **kwargs)

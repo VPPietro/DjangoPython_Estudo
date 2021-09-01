@@ -3,25 +3,34 @@
 
 
 {% block content %}
-<div class="container mt-5">
-    {% include 'partials/_alerts.html' %}
-<div class="card">
-    <div class="card-header">
-        <h5 class="card-title">Deletar Item #{{object.id}}</h5>
-    </div>
-    <div class="card-body">
-        <form method="post">
-            {% csrf_token %}
-            <div class="alert alert-warning" role="alert">
-                Tem certeza que deseja deletar o Item: <strong>{{ object }}</strong> ?
+    <div class="container mt-5">
+        {% include 'partials/_alerts.html' %}
+        {% if object.id %}
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="card-title">Deletar Item #{{object.id}}</h5>
+                </div>
+                <div class="card-body">
+                    <form method="post">
+                        {% csrf_token %}
+                        <div class="alert alert-warning" role="alert">
+                            Tem certeza que deseja deletar o Item: <strong>{{ object }}</strong> ?
+                        </div>
+                            <button type="submit" class="btn btn-danger">Deletar</button>
+                    </form>
+                </div>
             </div>
-            {% if messages %}
-                <button type="submit" class="btn btn-danger" disabled>Deletar</button>
-            {% else %}
-                <button type="submit" class="btn btn-danger">Deletar</button>
-            {% endif %}
-        </form>
+        {% else %}
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="card-title">404</h5>
+                </div>
+                <div class="card-body">
+                    <form method="post">
+                        <div class="alert alert-warning" role="alert">Nenhum item encontrado com este ID na sua lista</div>
+                    </form>
+                </div>
+            </div>
+        {% endif %}
     </div>
-</div>
-</div>
 {% endblock %}
