@@ -102,7 +102,7 @@ class ItemDeleteView(DeleteView):
         return super().setup(request, *args, **kwargs)
 
     # Remove contexto da request caso o vendedor não tenha permissão
-    def get_context_data(self, **kwargs: any) -> dict[str, any]:
+    def get_context_data(self, **kwargs: any):
         if not self.permissao_vendedor:
             return {}
         return super().get_context_data(**kwargs)
