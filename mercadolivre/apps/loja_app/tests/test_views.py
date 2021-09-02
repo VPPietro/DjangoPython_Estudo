@@ -121,6 +121,7 @@ class LojaUpdateTest(TestCase):
         self.assertEqual(self.item.valor, 123456)
         self.assertEqual(self.item.vendedor, self.vendedor1)
 
+
 class LojaDeleteTest(TestCase):
 
     def setUp(self):

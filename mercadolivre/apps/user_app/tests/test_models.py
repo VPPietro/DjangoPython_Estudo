@@ -1,31 +1,48 @@
 from django.test import TestCase
 
+from apps.user_app.models import UserModel
 
-# data = {
-#     'nome': 'Teste Item 1',
-#     'descricao': 'Este é o item de teste 1',
-#     'valor': 123456,
-#     'quantidade': 2,
-#     'vendedor': self.superuser,
-#     'imagem': 'fotos/2021/07/30/scarlett.jpg'
-# }
-# self.request = self.factory.post('/loja/create', data)
-# self.request.user = self.superuser
-# setattr(self.request, 'session', 'session')
-# setattr(self.request, '_messages', FallbackStorage(self.request))
-# response = ItemCreateView.as_view()(self.request)
-# self.assertEquals(response.status_code, 200)
 
-# MOVER PARA TEST DE LOGIN
-# browser = webdriver.Chrome(ChromeDriverManager().install())
-# # Obter a página de Login
-# browser.get('http://127.0.0.1:8000/user/login')
-# # Obter itens da página de login
-# email = browser.find_element_by_id('emailinput')
-# senha = browser.find_element_by_id('passwordinput')
-# entrar = browser.find_element_by_id('submitbtn')
+class UserModelTest(TestCase):
 
-# # Enviar informações para campos
-# email.send_keys('supertest@gmail.com')
-# senha.send_keys('123123123a')
-# entrar.send_keys(Keys.RETURN)
+    def setUp(self):
+        pass
+
+    def test_cria_um_usuario(self):
+        # Cria um usuario padrão
+        create_user = UserModel.objects.create_user(
+            email = 'pietro@gmail.com',
+            username = 'pietropv',
+            password = '123456',
+            first_name = 'pietro',
+            last_name = 'vanelli')
+        # Seleciona o user no db
+        user = UserModel.objects.get(id=create_user.id)
+        # Verifica se dados do usuário estão corretos
+        self.assertEqual(user.email, 'pietro@gmail.com')
+        self.assertEqual(user.username, 'pietropv')
+        self.assertEqual(user.first_name, 'pietro')
+        self.assertEqual(user.last_name, 'vanelli')
+        # Verifica se valores padrões de superuser são Falsos
+        self.assertEqual(user.is_staff, False)
+        self.assertEqual(user.is_superuser, False)
+        self.assertEqual(user.is_seller, False)
+
+    def test_cria_um_superusuario(self):
+        # Cria um superuser com o cria_superuser
+        create_user = UserModel.objects.create_superuser(
+            email = 'pietrosuper@gmail.com',
+            username = 'pietropvsuper',
+            password = '123456789',
+            first_name = 'pietros',
+            last_name = 'vanellis')
+        # Seleciona o superuser na db
+        superuser = UserModel.objects.get(id=create_user.id)
+        # Verifica se os dados do superuser estão corretos
+        self.assertEqual(superuser.email, 'pietrosuper@gmail.com')
+        self.assertEqual(superuser.username, 'pietropvsuper')
+        self.assertEqual(superuser.first_name, 'pietros')
+        self.assertEqual(superuser.last_name, 'vanellis')
+        # Verifica se os valores de superuser são Verdadeiros
+        self.assertEqual(superuser.is_staff, True)
+        self.assertEqual(superuser.is_superuser, True)

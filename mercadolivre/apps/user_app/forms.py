@@ -12,32 +12,28 @@ class SignUpForm(UserCreationForm):
         widget=TextInput(attrs={
             'class': 'form-control',
             'id': 'usernameInput',
-            'placeholder': 'Nome de usuário'
-        }))
+            'placeholder': 'Nome de usuário'}))
     email = EmailField(
         label='E-mail',
         max_length=255,
         widget=EmailInput(attrs={
             'class': 'form-control',
             'id': 'emailInput',
-            'placeholder': 'E-mail'
-        }))
+            'placeholder': 'E-mail'}))
     first_name = CharField(
         label='Primeiro nome',
         max_length=100,
         widget=TextInput(attrs={
             'class': 'form-control',
             'id': 'fnameInput',
-            'placeholder': 'Primeiro Nome'
-        }))
+            'placeholder': 'Primeiro Nome'}))
     last_name = CharField(
         label='Último nome',
         max_length=100,
         widget=TextInput(attrs={
             'class': 'form-control',
             'id': 'lnameInput',
-            'placeholder': 'Último Nome'
-        }))
+            'placeholder': 'Último Nome'}))
     password1 = CharField(
         label=("Senha"),
         strip=False,
@@ -45,9 +41,7 @@ class SignUpForm(UserCreationForm):
             'autocomplete': 'new-password',
             'class': 'form-control',
             'id': 'passwd1',
-            'placeholder': 'Senha'
-            }),
-        )
+            'placeholder': 'Senha'}),)
     password2 = CharField(
         label=("Confirmação de senha"),
         strip=False,
@@ -55,10 +49,7 @@ class SignUpForm(UserCreationForm):
             'autocomplete': 'new-password',
             'class': 'form-control',
             'id': 'passwd1',
-            'placeholder': 'Senha'
-
-        }),
-        )
+            'placeholder': 'Senha'}),)
 
     def clean(self):
         # Clean username

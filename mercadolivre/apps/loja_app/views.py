@@ -75,7 +75,7 @@ class ItemUpdateView(UpdateView):  # A foto do item não atualiza
         setup_std(self, kwargs, request, pk=True, item=True, permi_vend=True)
         return super().setup(request, *args, **kwargs)
 
-    def get_context_data(self, **kwargs: any):
+    def get_context_data(self, **kwargs: any) -> dict:
         """Camada de segurança que não permite o vendedor alterar qualquer item que não seja dele."""
         self.context = super().get_context_data(**kwargs)
         if self.context['item'].vendedor.id != self.request.user.id:
@@ -101,7 +101,7 @@ class ItemDeleteView(DeleteView):
         setup_std(self, kwargs, request, pk=True, item=True, permi_vend=True)
         return super().setup(request, *args, **kwargs)
 
-    # Remove contexto da request caso o vendedor não tenha permissão
+    # Remove contexto da request caso o vendedor não seja proprietário
     def get_context_data(self, **kwargs: any):
         if not self.permissao_vendedor:
             return {}
