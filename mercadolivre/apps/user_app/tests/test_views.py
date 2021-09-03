@@ -27,19 +27,39 @@ class LoginViewTest(TestCase):
     def setUp(self):
         setup_std(self, user=True, user2=True)
 
+
+
+
+
+
+
+
+
+
     def test_login_com_usuario_incorreto(self):
         # manda uma request tipo post com informações de usuario incorretas
         data = {
             'username': 'usertest@gmail.com',
-            'password': '123123123a'}
-        self.request = self.factory.post('/user/login', data=data)
-        self.request._messages = CookieStorage(self.request)
-        self.request.user = AnonymousUser()
-        response = LoginClassView.as_view()(self.request)
-        # Verifica se a página voltou para a tela de login
-
+            'password': '123123123aerrado'}
+        response = self.client.post('/user/login/', data, follow=True)
         # Verifica se a request continua com o user AnonymousUser()
-        self.assertTrue(self.request.user.is_anonymous)
+        self.assertTrue(isinstance(response.context['user'], AnonymousUser))
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
     def test_login_com_usuario_correto(self):
         # manda uma request tipo post com informações de usuario corretas
