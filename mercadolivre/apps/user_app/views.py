@@ -1,5 +1,7 @@
+from django.http import HttpRequest
+from django.http.response import HttpResponseBase, HttpResponseRedirect
 from django.utils.decorators import method_decorator
-from django.contrib.auth.views import LoginView, LogoutView
+from django.contrib.auth.views import LoginView, LogoutView, redirect_to_login
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.urls import reverse_lazy
@@ -20,6 +22,17 @@ class LoginClassView(LoginView):  # Criar mensagens de erro ou falhas
     redirect_authenticated_user = True
     settings.LOGIN_REDIRECT_URL = reverse_lazy('lista-itens-user')
 
+    def dispatch(self, request: HttpRequest, *args: any, **kwargs: any) -> HttpResponseBase:
+        if self.redirect_authenticated_user and self.request.user.is_authenticated:
+            redirect_to = self.get_success_url()
+            if redirect_to == self.request.path:
+                raise ValueError(
+                    "Redirection loop for authenticated user detected. Check that "
+                    "your LOGIN_REDIRECT_URL doesn't point to a login page."
+                )
+            return HttpResponseRedirect(redirect_to)
+        return super().dispatch(request, *args, **kwargs)
+
     def form_invalid(self, form):
         messages.error(self.request, 'Email ou senha inválido(s), tente novamente')
         return super().form_invalid(form)
@@ -31,6 +44,19 @@ class SignUpClassView(CreateView):
     form_class = SignUpForm
     success_url = reverse_lazy('login_page')
     success_message = 'Cadastro realizado com sucesso!'
+    redirect_authenticated_user = True
+
+    def dispatch(self, request: HttpRequest, *args: any, **kwargs: any) -> HttpResponseBase:
+        """Redireciona o usuario para a página de 'sua loja' caso o mesmo já esteja logado"""
+        if self.redirect_authenticated_user and self.request.user.is_authenticated:
+            redirect_to = reverse_lazy('lista-itens-user')
+            if redirect_to == self.request.path:
+                raise ValueError(
+                    "Redirection loop for authenticated user detected. Check that "
+                    "your LOGIN_REDIRECT_URL doesn't point to a login page."
+                )
+            return HttpResponseRedirect(redirect_to)
+        return super().dispatch(request, *args, **kwargs)
 
     def form_invalid(self, form):
         messages.error(self.request, 'Erro no cadastro, corrija os erros e tente novamente!')

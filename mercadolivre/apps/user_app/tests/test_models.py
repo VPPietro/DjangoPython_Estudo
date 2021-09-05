@@ -11,11 +11,11 @@ class UserModelTest(TestCase):
     def test_cria_um_usuario(self):
         # Cria um usuario padrão
         create_user = UserModel.objects.create_user(
-            email = 'pietro@gmail.com',
-            username = 'pietropv',
-            password = '123456',
-            first_name = 'pietro',
-            last_name = 'vanelli')
+            email='pietro@gmail.com',
+            username='pietropv',
+            password='123456',
+            first_name='pietro',
+            last_name='vanelli')
         # Seleciona o user no db
         user = UserModel.objects.get(id=create_user.id)
         # Verifica se dados do usuário estão corretos
@@ -31,11 +31,11 @@ class UserModelTest(TestCase):
     def test_cria_um_superusuario(self):
         # Cria um superuser com o cria_superuser
         create_user = UserModel.objects.create_superuser(
-            email = 'pietrosuper@gmail.com',
-            username = 'pietropvsuper',
-            password = '123456789',
-            first_name = 'pietros',
-            last_name = 'vanellis')
+            email='pietrosuper@gmail.com',
+            username='pietropvsuper',
+            password='123456789',
+            first_name='pietros',
+            last_name='vanellis')
         # Seleciona o superuser na db
         superuser = UserModel.objects.get(id=create_user.id)
         # Verifica se os dados do superuser estão corretos
