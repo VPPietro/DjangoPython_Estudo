@@ -1,13 +1,16 @@
-from django.http import HttpRequest
+from typing import Optional
+from django.shortcuts import get_object_or_404
+from django.http import HttpRequest, request
 from django.http.response import HttpResponseBase, HttpResponseRedirect
 from django.utils.decorators import method_decorator
-from django.contrib.auth.views import LoginView, LogoutView, redirect_to_login
+from django.contrib.auth.views import LoginView, LogoutView
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.urls import reverse_lazy
 from django.conf import settings
 from django.views.generic.edit import CreateView, UpdateView
 from django.views.generic.detail import DetailView
+
 from apps.user_app.forms import AlterUserForm, SignUpForm, LoginForm
 from apps.user_app.models import UserModel
 
@@ -74,20 +77,20 @@ class InfoUserClassView(DetailView):
     template_name = 'user/user_page.html'
     context_object_name = 'user'
 
+    def get_object(self):
+        """Por padrão o DetailView precisa de um 'pk' na URL, sobrescrevendo este método,
+        a página 'user info' sempre mostrará somente as informações do user logado"""
+        return get_object_or_404(UserModel, pk=self.request.user.id)
 
+
+@method_decorator(decorator_login, 'dispatch')
 class UpdateUserInfoClassView(UpdateView):
     model = UserModel
     template_name = 'user/alter_user_page.html'
     form_class = AlterUserForm
+    success_url = reverse_lazy('user_info_page')
 
-    def get_initial(self):
-        usuario = self.request.user
-        self.initial['first_name'] = usuario.first_name
-        self.initial['last_name'] = usuario.last_name
-        self.initial['email'] = usuario.email
-        self.initial['is_seller'] = [True if usuario.is_seller else False]
-        return super().get_initial()
-
-    def get_success_url(self) -> str:
-        user_id = self.kwargs['pk']
-        return reverse_lazy('user_info_page', kwargs={'pk': user_id})
+    def get_object(self):
+        """Por padrão o DetailView precisa de um 'pk' na URL, sobrescrevendo este método,
+        a página 'user info' sempre mostrará somente as informações do user logado"""
+        return get_object_or_404(UserModel, pk=self.request.user.id)

@@ -1,3 +1,4 @@
+from os import setuid
 from django.http import response
 from django.test import TestCase, RequestFactory
 from django.contrib.auth.models import AnonymousUser
@@ -24,10 +25,12 @@ def setup_std(self, factory=True, user=False, user2=False):
         last_name='Test',
         is_seller=False,) if user2 else None
 
+
 def user_existente(self, nome_do_user: str) -> bool:
     """Busca no queryset se o usuário passado existe, retorna True caso positivo"""
     user = UserModel.objects.get_queryset().filter(username=nome_do_user)
     return False if len(user) < 1 else True
+
 
 def mesma_pagina(response, pagina: str) -> bool:
     return response.wsgi_request.path == pagina
@@ -179,7 +182,8 @@ class SignOutViewTest(TestCase):
 
     def test_tenta_deslogar_com_user_logado(self):
         """Primeiro faz login com user test e então realiza um logoff"""
-        response = self.client.post(reverse_lazy('login_page'), {'username': 'usertest@gmail.com', 'password': '123123123a'})
+        response = self.client.post(reverse_lazy('login_page'), {
+                                    'username': 'usertest@gmail.com', 'password': '123123123a'})
         self.assertEqual(response.wsgi_request.user, self.user)
         response = self.client.get(reverse_lazy('logoff_page'))
         self.assertTrue(isinstance(response.wsgi_request.user, AnonymousUser))
@@ -188,35 +192,95 @@ class SignOutViewTest(TestCase):
 class UserInfoViewTest(TestCase):
 
     def setUp(self):
-        pass
+        setup_std(self, user=True)
 
     def test_recebe_info_correta_do_user_logado(self):
-        # Faz login com user test
+        """Com o user logado, tenta acessar a página de 'info user', deve receber informações"""
+        # Login com o user test
+        data = {
+            'username': 'usertest@gmail.com',
+            'password': '123123123a'}
+        self.client.post('/user/login/', data, follow=True)
         # Faz um get na página de user info
+        response = self.client.get(reverse_lazy('user_info_page'))
         # com response.content verifica se as infos do user test estão corretas
-        pass
+        self.assertIn(b'userTest', response.content)
+        self.assertIn(b'usertest@gmail.com', response.content)
+        self.assertIn(b'User', response.content)
+
+    def test_tenta_acessar_info_sem_estar_logado(self):
+        """O usuário não deve conseguir entrar na página de 'user info' sem estar logado"""
+        # Faz um get na página de user info
+        response = self.client.get(reverse_lazy('user_info_page'))
+        # Verifica se foi redirecionado para a página de login
+        self.assertEqual(response.status_code, 302)
 
 
 class AlterUserInfoViewTest(TestCase):
 
     def setUp(self):
+        setup_std(self, user=True)
         # já mantem o user test logado, já que será usado para todos os tests desta view
-        pass
+        data = {
+            'username': 'usertest@gmail.com',
+            'password': '123123123a'}
+        self.client.post('/user/login/', data, follow=True)
 
     def test_manda_nome_em_branco(self):
+        """Com o user logado, manda um post para a 'alter user info' com nome em branco,
+        não deve ser aceito"""
         # Manda um post para a página de alter user info com nome em branco
+        data = {
+            'first_name': '',
+            'last_name': 'sobrenome novo',
+            'is_seller': True}
+        response = self.client.post(reverse_lazy(
+            'alter_user_info_page'), data=data, follow=True)
         # verifica se continua na página de alter user info
-        # verifica se nenhuma informação foi alterada
-        pass
+        self.assertEqual(response.wsgi_request.path_info, '/user/update/')
+        # verifica se informação não foi alterada
+        user = UserModel.objects.get(id=response.wsgi_request.user.id)
+        self.assertEqual(user.first_name, 'User')
 
     def test_manda_sobrenome_em_branco(self):
-        # Manda um post para a página de alter user info com sobrenome em branco
+        """Com o user logado, manda um post para a 'alter user info' com sobrenome em branco,
+        não deve ser aceito"""
+        data = {
+            'first_name': 'nome novo',
+            'last_name': '',
+            'is_seller': True}
+        response = self.client.post(reverse_lazy(
+            'alter_user_info_page'), data=data, follow=True)
         # verifica se continua na página de alter user info
-        # verifica se nenhuma informação foi alterada
-        pass
+        self.assertEqual(response.wsgi_request.path_info, '/user/update/')
+        # verifica se informação não foi alterada
+        user = UserModel.objects.get(id=response.wsgi_request.user.id)
+        self.assertEqual(user.last_name, 'Test')
 
     def test_manda_form_correto(self):
+        """Com o user logado manda um form completo e correto para 'alter user info',
+        deve ser aceito"""
         # Manda um post para a página de alter user info com form correto
+        data = {
+            'first_name': 'nome novo',
+            'last_name': 'sobrenome novo',
+            'is_seller': True}
+        response = self.client.post(reverse_lazy(
+            'alter_user_info_page'), data=data, follow=True)
         # verifica se foi redirecionado para a página de user info
+        self.assertEqual(response.wsgi_request.path_info, '/user/')
         # verifica se as informações do user test foram alteradas
-        pass
+        user = UserModel.objects.get(id=response.wsgi_request.user.id)
+        self.assertEqual(user.first_name, 'nome novo')
+        self.assertEqual(user.last_name, 'sobrenome novo')
+        self.assertEqual(user.is_seller, True)
+
+    def test_acessa_pagina_sem_estar_logado(self):
+        """Um user sem estar logado não deve ter acesso a página de 'alter user info'"""
+        # Faz logoff
+        self.client.get(reverse_lazy('logoff_page'))
+        # Tenta acessar a página do alter user info
+        response = self.client.get(reverse_lazy('alter_user_info_page'))
+        # Verifica se foi redirecionado para tela de login
+        self.assertEqual(response.status_code, 302)
+        self.assertEqual(response.wsgi_request.path_info, '/user/update/')
