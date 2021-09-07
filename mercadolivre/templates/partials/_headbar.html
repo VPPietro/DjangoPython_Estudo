@@ -45,6 +45,7 @@
                     <a class="dropdown-item" href="{% url 'signup_page' %}">Cadastro</a>
                 </div>
             </li>
+            {% include 'cart/partials/_cart.html' %}
 
         </ul>
         <!-- ** FIM HEADBAR LADO DIREITO ** -->
@@ -93,7 +94,8 @@
 
         <!-- ** INICIO HEADBAR LADO DIREITO ** -->
         <ul class="navbar-nav ml-auto">
-
+            <li class="nav-item active">
+            </li>
             <li class="nav-item dropdown">
                 <a class="nav-link dropdown-toggle" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Logado como: {{request.user}}</a>
                 <div class="dropdown-menu" aria-labelledby="navbarDropdown">
@@ -106,6 +108,7 @@
                     <a class="dropdown-item" href="{% url 'logoff_page' %}">Logout</a>
                 </div>
             </li>
+            {% include 'cart/partials/_cart.html' %}
 
         </ul>
         <!-- ** FIM HEADBAR LADO DIREITO ** -->
