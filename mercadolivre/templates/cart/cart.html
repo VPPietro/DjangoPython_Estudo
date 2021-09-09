@@ -18,11 +18,11 @@
             <tbody>
                 {% for item in itens %}
                 <tr>
-                    <td><img src="/media/{{item.imagem}}" alt="not found" width="100"></td>
-                    <td>{{item.nome}}</td>
-                    <td>{{item.valor}}</td>
-                    <td>{{item.quantidade}}</td>
-                    <td>{{item.vendedor}}</td>
+                    <td><img src="/media/{{item.item.imagem}}" alt="not found" width="100"></td>
+                    <td>{{item.item.nome}}</td>
+                    <td>{{item.item.valor}}</td>
+                    <td>{{item.quantidade}} / {{item.item.quantidade}}</td>
+                    <td>{{item.item.vendedor}}</td>
                     <td><a href="/loja/{{item.id}}" type="button" class="btn btn-info">Info</a></td>
                     <td><a href="" type="button" class="btn btn-danger">Remove</a></td>
                 </tr>

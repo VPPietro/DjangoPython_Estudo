@@ -12,7 +12,7 @@
                         <p class="card-text">R${{item.valor}}</p>
                         <div>
                             <a href="{% url 'detalhe-item' item.id %}" class="btn btn-primary">Ver detalhes</a>
-                            <a href="{% url 'detalhe-item' item.id %}" class="btn btn-primary">Add to cart</a>
+                            <a href="{% url 'add_to_cart' item.id %}" class="btn btn-primary">Add to cart</a>
                             <p>Vendido por: {{item.vendedor}}</p>
                         </div>
                     </div>
