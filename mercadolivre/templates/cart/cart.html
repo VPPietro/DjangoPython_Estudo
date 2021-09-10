@@ -16,14 +16,14 @@
                 </tr>
             </thead>
             <tbody>
-                {% for item in itens %}
+                {% for cart_item in itens %}
                 <tr>
-                    <td><img src="/media/{{item.item.imagem}}" alt="not found" width="100"></td>
-                    <td>{{item.item.nome}}</td>
-                    <td>{{item.item.valor}}</td>
-                    <td>{{item.quantidade}} / {{item.item.quantidade}}</td>
-                    <td>{{item.item.vendedor}}</td>
-                    <td><a href="/loja/{{item.id}}" type="button" class="btn btn-info">Info</a></td>
+                    <td><img src="/media/{{cart_item.loja_item.imagem}}" alt="not found" width="100"></td>
+                    <td>{{cart_item.loja_item.nome}}</td>
+                    <td>{{cart_item.loja_item.valor}}</td>
+                    <td>{{cart_item.quantidade_compra}} / {{cart_item.loja_item.quantidade}}</td>
+                    <td>{{cart_item.loja_item.vendedor}}</td>
+                    <td><a href="/loja/{{cart_item.loja_item.id}}" type="button" class="btn btn-info">Info</a></td>
                     <td><a href="" type="button" class="btn btn-danger">Remove</a></td>
                 </tr>
                 {% endfor %}

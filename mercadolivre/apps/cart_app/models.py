@@ -5,23 +5,23 @@ from apps.loja_app.models import ItensModel
 from apps.user_app.models import UserModel
 
 
-# class CartItemModel(models.Model):
-#     item = models.OneToOneField(ItensModel, on_delete=CASCADE, default=7)
-#     quantidade = models.IntegerField(verbose_name='Quantidade do item no carrinho')
+class CartItemModel(models.Model):
+    loja_item = models.ForeignKey(ItensModel, on_delete=CASCADE)
+    quantidade_compra = models.IntegerField(verbose_name='Quantidade do item no carrinho')
 
-#     class Meta:
-#         db_table = 'cart_item'
+    class Meta:
+        db_table = 'cart_item'
 
-#     def __str__(self) -> str:
-#         return 'Item: ' + str(self.item_id)
+    def __str__(self) -> str:
+        return 'Cart Item id: ' + str(self.id)
 
 
 class CartModel(models.Model):
-    cart_item = models.OneToOneField(ItensModel, on_delete=SET_NULL, default=1, null=True)
+    cart_item = models.ManyToManyField(CartItemModel)
     comprador = models.OneToOneField(UserModel, on_delete=CASCADE, null=True)
 
     class Meta:
         db_table = 'cart_model'
 
     def __str__(self) -> str:
-        return 'CART comprador ' + str(self.comprador_id)
+        return 'Cart id: ' + str(self.id)
