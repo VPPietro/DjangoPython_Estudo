@@ -7,31 +7,43 @@ from django.urls import reverse_lazy
 from apps.loja_app.models import ItensModel
 from apps.cart_app.models import  CartModel, CartItemModel
 
+"""
+Vincular com a tela de login, mesclar cart de user anonimo com cart do user que fez login
+"""
 
-# class CartView(ListView):
-#     model = CartModel
-#     template_name = 'cart/cart.html'
-#     context_object_name = 'itens'
-
-#     def dispatch(self, request: HttpRequest, *args: any, **kwargs: any) -> HttpResponseBase:
-#         # Verifica se o usuário já tem um carrinho
-#             # Caso não tenha, redireciona para a página de criação de carrinho
-#         return super().dispatch(request, *args, **kwargs)
-
-#     def get_context_data(self, **kwargs: any):
-#         context = super().get_context_data(**kwargs)
-#         print(context.get('object_list'))
-#         return context
+def possui_carrinho(usuario):
+    """Retorna True, caso o obj usuario tenha carrinho"""
+    pass
 
 
-def cart_view(request, **kwargs):
-    """Falta:   - criar carrinhos para logados e nao logados
-                - verificar se tem dois cart_item com loja_items iguais e unificar
-                - corrigir, para caso acesse a página de cart e não tenha nenhum item (atualmente quebra a página)"""
-    cart = CartModel.objects.filter(comprador_id=request.user.id)[0]
-    cart_itens = CartItemModel.objects.get_queryset().filter(cartmodel=cart.id)
-    print(cart, cart_itens)
-    return render(request, 'cart/cart.html', {'itens': cart_itens})
+class CartView(ListView):
+    model = CartModel
+    template_name = 'cart/cart.html'
+    context_object_name = 'itens'
+
+    def dispatch(self, request: HttpRequest, *args: any, **kwargs: any) -> HttpResponseBase:
+        # Verifica se o usuário já tem um carrinho
+            # Caso não tenha, redireciona para a página de criação de carrinho
+        return super().dispatch(request, *args, **kwargs)
+
+    def get_context_data(self, **kwargs: any):
+        if self.request.user.is_authenticated:
+            # Caso o usuario esteja logado
+            cart = CartModel.objects.filter(comprador_id=self.request.user.id)[0]
+            cart_itens = CartItemModel.objects.get_queryset().filter(cartmodel=cart.id)
+        else:
+            # Caso não esteja logado, tem carrinho?
+            cart_itens = None
+        return {'itens': cart_itens}
+
+
+# def cart_view(request):
+#     """Falta:   - criar carrinhos para logados e nao logados
+#                 - verificar se tem dois cart_item com loja_items iguais e unificar
+#                 - corrigir, para caso acesse a página de cart e não tenha nenhum item (atualmente quebra a página)"""
+#     cart = CartModel.objects.filter(comprador_id=request.user.id)[0]
+#     cart_itens = CartItemModel.objects.get_queryset().filter(cartmodel=cart.id)
+#     return render(request, 'cart/cart.html', {'itens': cart_itens})
 
 def add_to_cart(request, **kwargs):
     """Falta:   - verificar se quantidade a adicionar no carrinho é maior que a quantidade em estoque do produto
@@ -45,7 +57,9 @@ def add_to_cart(request, **kwargs):
         item = ItensModel.objects.filter(id=pk)
         quantidade = 1
     if item:
-        # Caso o item exista, cria um cart item e seleciona um carrinho caso exista
+        # Caso o item exista, testa se existe o item no carrinho
+        # Caso tenha o item no carrinho incremente a quantidade
+        # Caso não tenha o item no carrinho, cria um cart_item e adiciona no carrinho
         cart_item = CartItemModel.objects.create(loja_item=item[0], quantidade_compra=quantidade)
         carrinho = CartModel.objects.filter(comprador=request.user.id)
         if carrinho:
