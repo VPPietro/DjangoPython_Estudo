@@ -24,7 +24,7 @@
                     <td>{{cart_item.quantidade_compra}} / {{cart_item.loja_item.quantidade}}</td>
                     <td>{{cart_item.loja_item.vendedor}}</td>
                     <td><a href="/loja/{{cart_item.loja_item.id}}" type="button" class="btn btn-info">Info</a></td>
-                    <td><a href="" type="button" class="btn btn-danger">Remove</a></td>
+                    <td><a href="{% url 'remove_from_cart' cart_item.id %}" type="button" class="btn btn-danger">Remove</a></td>
                 </tr>
                 {% endfor %}
                 <td><a type="button" class="btn btn-success" href="">Continuar compra</a></td>

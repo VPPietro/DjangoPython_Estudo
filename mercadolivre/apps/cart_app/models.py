@@ -1,6 +1,5 @@
-from django.contrib.auth.models import AnonymousUser
 from django.db import models
-from django.db.models.deletion import CASCADE, SET_NULL
+from django.db.models.deletion import CASCADE
 
 from apps.loja_app.models import ItensModel
 from apps.user_app.models import UserModel

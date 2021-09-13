@@ -9,6 +9,7 @@ from django.urls import reverse_lazy
 from django.contrib.messages.views import SuccessMessageMixin
 
 from apps.loja_app.views_func import *
+from apps.cart_app import functions as cart_functions
 from apps.loja_app.forms import CreateItemForm, UpdateItemForm
 
 decorator = [
