@@ -1,13 +1,11 @@
-from django.views.generic import ListView, CreateView
+from django.views.generic import ListView
 from django.views.generic.edit import DeleteView
-from django.http import HttpRequest
-from django.http.response import HttpResponseBase
 from django.shortcuts import redirect
 from django.urls import reverse_lazy
 
 from apps.cart_app.functions import *
-from apps.loja_app.models import ItensModel
 from apps.cart_app.models import  CartItemModel, CartItemModel
+from apps.loja_app.models import ItensModel
 
 """
 Vincular com a tela de login, mesclar cart de user anonimo com cart do user que fez login
@@ -22,6 +20,14 @@ class CartView(ListView):
     def get_context_data(self, **kwargs: any): # adicionar total da compra
         cart_itens = get_cart_items(self.request)
         return {'itens': cart_itens}
+
+
+class RemoveFromCart(DeleteView):
+    model = CartItemModel
+    success_url = reverse_lazy('cart_page')
+
+    def get(self, request, *args, **kwargs):
+        return self.post(request, *args, **kwargs)
 
 
 def add_to_cart(request, **kwargs):
@@ -43,11 +49,3 @@ def add_to_cart(request, **kwargs):
         carrinho = get_or_create_cart(request)
         carrinho.cart_item.add(cart_item)
     return redirect(reverse_lazy('cart_page'))
-
-
-class RemoveFromCart(DeleteView):
-    model = CartItemModel
-    success_url = reverse_lazy('cart_page')
-
-    def get(self, request, *args, **kwargs):
-        return self.post(request, *args, **kwargs)

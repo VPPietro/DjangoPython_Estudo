@@ -1,7 +1,6 @@
-from typing import Optional
 from django.shortcuts import get_object_or_404
-from django.http import HttpRequest, request
-from django.http.response import HttpResponseBase, HttpResponseRedirect
+from django.http import HttpRequest
+from django.http.response import HttpResponseBase, HttpResponseRedirect, HttpResponse
 from django.utils.decorators import method_decorator
 from django.contrib.auth.views import LoginView, LogoutView
 from django.contrib.auth.decorators import login_required
@@ -13,6 +12,8 @@ from django.views.generic.detail import DetailView
 
 from apps.user_app.forms import AlterUserForm, SignUpForm, LoginForm
 from apps.user_app.models import UserModel
+from apps.cart_app.models import CartModel
+from apps.cart_app.functions import join_carts, get_cart_items
 
 decorator_login = [
     login_required(login_url='/user/login')
@@ -39,6 +40,12 @@ class LoginClassView(LoginView):  # Criar mensagens de erro ou falhas
     def form_invalid(self, form):
         messages.error(self.request, 'Email ou senha inválido(s), tente novamente')
         return super().form_invalid(form)
+
+    # def post(self, request: HttpRequest, *args: str, **kwargs: any) -> HttpResponse:
+    #     carrinho_anonimo = self.request.session.get('carrinho', False)
+    #     if carrinho_anonimo and get_cart_items(request):
+    #         request.session['carrinho_anonimo'] = carrinho_anonimo
+    #     return super().post(request, *args, **kwargs)
 
 
 class SignUpClassView(CreateView):

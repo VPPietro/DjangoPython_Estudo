@@ -1,6 +1,7 @@
+from apps.cart_app.models import CartModel
 from django.contrib import messages
 from django.http import HttpResponse, HttpRequest
-from django.http.response import HttpResponseRedirect
+from django.http.response import HttpResponseRedirect, HttpResponseBase
 from django.utils.decorators import method_decorator
 from django.contrib.auth.decorators import login_required, permission_required
 from django.shortcuts import redirect
@@ -25,6 +26,13 @@ class ItemListView(ListView):
     paginate_by = 10
     context_object_name = 'itens'
     ordering = ['-id']  # item mais recente primeiro
+
+    # def dispatch(self, request: HttpRequest, *args: any, **kwargs: any) -> HttpResponseBase:
+    #     print(self.request.session.get('carrinho'))
+    #     if self.request.session.get('carrinho_anonimo', False):
+    #         print(self.request.session.get('carrinho_anonimo', False))
+    #         print(CartModel.objects.filter(comprador=self.request.user))
+    #     return super().dispatch(request, *args, **kwargs)
 
 
 class ItemDetailView(DetailView):
