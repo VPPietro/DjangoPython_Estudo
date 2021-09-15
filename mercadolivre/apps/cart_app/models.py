@@ -15,7 +15,7 @@ class CartItemModel(models.Model):
         db_table = 'cart_item'
 
     def __str__(self) -> str:
-        return 'Cart Item id: ' + str(self.id)
+        return str(self.loja_item.id)
 
 
 class CartModel(models.Model):
