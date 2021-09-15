@@ -14,8 +14,8 @@ class CartItemModel(models.Model):
     class Meta:
         db_table = 'cart_item'
 
-    def __str__(self) -> str:
-        return str(self.loja_item.id)
+    # def __str__(self) -> str:
+    #     return str(self.id)
 
 
 class CartModel(models.Model):

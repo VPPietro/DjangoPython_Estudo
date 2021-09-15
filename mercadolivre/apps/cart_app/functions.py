@@ -1,4 +1,5 @@
-from apps.cart_app.models import CartModel
+from apps.loja_app.models import ItensModel
+from apps.cart_app.models import CartItemModel, CartModel
 
 
 def get_or_create_cart(request):
@@ -42,48 +43,63 @@ def get_cart_items(request=None, carrinho=None):
     cart_item = carrinho.cart_item.get_queryset()
     return cart_item
 
-
-def join_carts_old(carrinho_user: CartModel, carrinho_anonimo: CartModel):
-    """Junta o carrinho do usuário anonimo com do usuário que fizer login"""
-    list_cart_anonimo_items = list(get_cart_items(carrinho=carrinho_anonimo))
-    list_cart_user_items = list(get_cart_items(carrinho=carrinho_user))
-    list_user_items_id = []
-    for y in list_cart_user_items:
-        list_user_items_id.append(y.loja_item.id)
-    for i in list_cart_anonimo_items:
-        if i.loja_item.id in list_user_items_id:
-            item_user = list_cart_user_items[list_user_items_id.index(i.loja_item.id)]
-            quantidade_total = i.quantidade_compra + item_user.quantidade_compra
-            item = carrinho_user.cart_item.get(id=item_user.id)
-            item.quantidade_compra = quantidade_total
-            item.save()
-        else:
-            carrinho_user.cart_item.add(i)
-
-
+########## Corrigir, se o carrinho do user estiver vazio, não adiciona (se estiver vazio não era pra entrar no join_carts)
 def join_carts(carrinho_user: CartModel, carrinho_anonimo: CartModel):
-    itens_cart_anonimo = list(get_cart_items(carrinho=carrinho_anonimo))
-    itens_cart_user = list(get_cart_items(carrinho=carrinho_user))
-    itens_repetidos = set(itens_cart_user).intersection(itens_cart_anonimo)
-    print(itens_cart_user, itens_cart_anonimo)
-    for i in itens_cart_anonimo:
-        try: item = itens_cart_user[itens_cart_user.index(i)]
-        except: item = None
-        print(item)
-        if item:
-            if i == item:
-                print('dentro do itens cart user')
-                print(itens_cart_anonimo, itens_cart_user)
-                item = itens_cart_user[itens_cart_user.index(i)]
-                item.quantidade_compra += i.quantidade_compra
-                item.save()
-        else:
-            carrinho_user.cart_item.add(i)
+    carrinho_item_user = get_cart_items(carrinho=carrinho_user)
+    carrinho_anonimo = get_cart_items(carrinho=carrinho_anonimo)
+    print(carrinho_item_user)
+    for u in carrinho_item_user:
+        print('join cart for 1')
+        for a in carrinho_anonimo:
+            print('join cart for 2')
+            if u.loja_item.id == a.loja_item.id:
+                print('join cart entrou no if')
+                # Caso o id dos itens sejam iguais,
+                # soma a quantidade e deleta o item anonimo
+                u.quantidade_compra += a.quantidade_compra
+                u.save()
+                a.delete()
+            elif a.id:
+                print('join cart entrou no elif')
+                # Caso não exista o item no carrinho do user
+                # e o item já não tenha sido deletado, adiciona no carrinho
+                carrinho_user.cart_item.add(a)
+            else:
+                print('join cart entrou no else')
+
+
+def add_to_cart_func(loja_item_id: int, carrinho: CartModel, quantidade=1):
+    carrinho_itens = get_cart_items(carrinho=carrinho)
+    # Verifica se o item existe no carrinho
+    loja_ids = []
+    for i in carrinho_itens:
+        loja_ids.append(i.loja_item.id)
+    try: item = loja_ids.index(loja_item_id)
+    except ValueError: item = False
+
+    # Caso exista:
+    if item:
+        carrinho_itens[item].quantidade_compra += quantidade
+        carrinho_itens[item].save()
+    else:
+        item_loja = ItensModel.objects.filter(id=loja_item_id)
+        if item_loja:
+            item_loja = item_loja[0]
+            item_cart = CartItemModel.objects.create(loja_item=item_loja, quantidade_compra=quantidade)
+            carrinho.cart_item.add(item_cart)
 
 
 
 
-    # itens_repetidos = set(itens_cart_user).intersection(itens_cart_anonimo)
-    # print(itens_repetidos)
-
-
+    # for i in carrinho_itens:
+    #     if loja_item_id == i.loja_item.id:
+    #         i.quantidade_compra += quantidade
+    #         i.save()
+    #         break
+    #     else:
+    #         item_loja = ItensModel.objects.filter(id=loja_item_id)
+    #         if item_loja:
+    #             item_loja = item_loja[0]
+    #             item_cart = CartItemModel.objects.create(loja_item=item_loja, quantidade_compra=quantidade)
+    #             carrinho.cart_item.add(item_cart)
+    #         break

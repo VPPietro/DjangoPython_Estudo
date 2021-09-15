@@ -5,7 +5,6 @@ from django.urls import reverse_lazy
 
 from apps.cart_app.functions import *
 from apps.cart_app.models import  CartItemModel, CartItemModel
-from apps.loja_app.models import ItensModel
 
 """
 Vincular com a tela de login, mesclar cart de user anonimo com cart do user que fez login
@@ -36,16 +35,6 @@ def add_to_cart(request, **kwargs):
         Tests   - Se um usuário não tem um carrinho, deve criar automáticamente
                 - """
     pk = kwargs.get('pk', 0)
-    item = None
-    if pk:
-        # Caso tenha id do item no link, faz select do item
-        item = ItensModel.objects.filter(id=pk)
-        quantidade = 1
-    if item:
-        # Caso o item exista, testa se existe o item no carrinho
-        # Caso tenha o item no carrinho incremente a quantidade
-        # Caso não tenha o item no carrinho, cria um cart_item e adiciona no carrinho
-        cart_item = CartItemModel.objects.create(loja_item=item[0], quantidade_compra=quantidade)
-        carrinho = get_or_create_cart(request)
-        carrinho.cart_item.add(cart_item)
+    carrinho = get_or_create_cart(request)
+    add_to_cart_func(pk, carrinho)
     return redirect(reverse_lazy('cart_page'))
