@@ -2,6 +2,8 @@ from django.views.generic import ListView
 from django.views.generic.edit import DeleteView
 from django.shortcuts import redirect
 from django.urls import reverse_lazy
+from django.http import HttpRequest
+from django.http.response import HttpResponseBase
 
 from apps.cart_app.functions import *
 from apps.cart_app.models import  CartItemModel, CartItemModel
@@ -16,8 +18,21 @@ class CartView(ListView):
     template_name = 'cart/cart.html'
     context_object_name = 'itens'
 
+    def dispatch(self, request: HttpRequest, *args: any, **kwargs: any) -> HttpResponseBase:
+        ##### Verificar se o user esta autenticado
+        if request.user.is_authenticated:
+            ####  Verificar se o user tem cart anonimo
+            if request.session.get('carrinho', False):
+                ###   Chamar a função de join carts
+                self.carrinho, anonimo = get_or_create_cart(request)
+                join_carts(self.carrinho, anonimo)
+        return super().dispatch(request, *args, **kwargs)
+
     def get_context_data(self, **kwargs: any): # adicionar total da compra
-        cart_itens = get_cart_items(self.request)
+        if not self.carrinho:
+            cart_itens = get_cart_items(self.request)
+        else:
+            cart_itens = get_cart_items(carrinho=self.carrinho)
         return {'itens': cart_itens}
 
 
@@ -35,6 +50,6 @@ def add_to_cart(request, **kwargs):
         Tests   - Se um usuário não tem um carrinho, deve criar automáticamente
                 - """
     pk = kwargs.get('pk', 0)
-    carrinho = get_or_create_cart(request)
+    carrinho, id_carrinho_anono = get_or_create_cart(request)
     add_to_cart_func(pk, carrinho)
     return redirect(reverse_lazy('cart_page'))

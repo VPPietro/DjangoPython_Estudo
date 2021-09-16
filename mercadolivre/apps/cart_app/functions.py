@@ -1,3 +1,4 @@
+from django.http import response
 from apps.loja_app.models import ItensModel
 from apps.cart_app.models import CartItemModel, CartModel
 
@@ -39,19 +40,23 @@ def get_or_create_cart_old(request):
             carrinho = carrinho[0]
     return carrinho
 
-#### Criar funções para juntar os carts
+
 def get_or_create_cart(request):
     """Retorna o carrinho do user caso ele tenha ou cria um novo"""
+    anonimo = request.session.get('carrinho', False)
     if request.user.is_authenticated:
         # Seleciona ou cria um carrinho pro user logado
         carrinho = CartModel.objects.filter(comprador=request.user.id)
         carrinho = carrinho[0] if carrinho else cria_carrinho(request.user)
+        if anonimo:
+            try: anonimo = CartModel.objects.get(id=anonimo)
+            except ValueError: anonimo = False
     else:
         # Seleciona ou cria um carrinho pro user anonimo
-        carrinho = CartModel.objects.filter(id=request.session.get('carrinho'))
+        carrinho = CartModel.objects.filter(id=anonimo)
         carrinho = carrinho[0] if carrinho else cria_carrinho()
         request.session['carrinho'] = carrinho.id
-    return carrinho
+    return carrinho, anonimo
 
 
 def cria_carrinho(user=None):
@@ -65,33 +70,24 @@ def tranfere_itens_de_carrinho(origem: CartModel, destino: CartModel):
 def get_cart_items(request=None, carrinho=None):
     """Retorna Queryset de Cart Itens caso exista, ou []"""
     if request:
-        carrinho = get_or_create_cart(request)
+        carrinho = get_or_create_cart(request)[0]
     cart_item = carrinho.cart_item.get_queryset()
     return cart_item
 
 
 def join_carts(carrinho_user: CartModel, carrinho_anonimo: CartModel):
-    carrinho_item_user = get_cart_items(carrinho=carrinho_user)
-    carrinho_anonimo = get_cart_items(carrinho=carrinho_anonimo)
-    print(carrinho_item_user)
+    carrinho_item_user = carrinho_user.cart_item.get_queryset()
+    carrinho_anonimo = carrinho_anonimo.cart_item.get_queryset()
     for u in carrinho_item_user:
-        print('join cart for 1')
         for a in carrinho_anonimo:
-            print('join cart for 2')
             if u.loja_item.id == a.loja_item.id:
-                print('join cart entrou no if')
-                # Caso o id dos itens sejam iguais,
-                # soma a quantidade e deleta o item anonimo
+                # Caso tenha o item no carrinho
                 u.quantidade_compra += a.quantidade_compra
                 u.save()
                 a.delete()
             elif a.id:
-                print('join cart entrou no elif')
-                # Caso não exista o item no carrinho do user
-                # e o item já não tenha sido deletado, adiciona no carrinho
+                # Caso não exista o item no carrinho
                 carrinho_user.cart_item.add(a)
-            else:
-                print('join cart entrou no else')
 
 
 def add_to_cart_func(loja_item_id: int, carrinho: CartModel, quantidade=1):
@@ -112,19 +108,3 @@ def add_to_cart_func(loja_item_id: int, carrinho: CartModel, quantidade=1):
             item_loja = item_loja[0]
             item_cart = CartItemModel.objects.create(loja_item=item_loja, quantidade_compra=quantidade)
             carrinho.cart_item.add(item_cart)
-
-
-
-
-    # for i in carrinho_itens:
-    #     if loja_item_id == i.loja_item.id:
-    #         i.quantidade_compra += quantidade
-    #         i.save()
-    #         break
-    #     else:
-    #         item_loja = ItensModel.objects.filter(id=loja_item_id)
-    #         if item_loja:
-    #             item_loja = item_loja[0]
-    #             item_cart = CartItemModel.objects.create(loja_item=item_loja, quantidade_compra=quantidade)
-    #             carrinho.cart_item.add(item_cart)
-    #         break
