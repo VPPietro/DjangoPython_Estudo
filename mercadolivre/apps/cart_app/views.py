@@ -20,7 +20,7 @@ class CartView(ListView):
 
     def dispatch(self, request: HttpRequest, *args: any, **kwargs: any) -> HttpResponseBase:
         """Chama join carts caso o user esteja logado e tenha cart anonimo"""
-        get_cart_data(request)
+        # get_cart_data(request)
         self.carrinho = False
         if request.user.is_authenticated:
             if request.session.get('carrinho', False):
