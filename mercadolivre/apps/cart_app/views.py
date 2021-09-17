@@ -19,11 +19,11 @@ class CartView(ListView):
     context_object_name = 'itens'
 
     def dispatch(self, request: HttpRequest, *args: any, **kwargs: any) -> HttpResponseBase:
-        ##### Verificar se o user esta autenticado
+        """Chama join carts caso o user esteja logado e tenha cart anonimo"""
+        get_cart_data(request)
+        self.carrinho = False
         if request.user.is_authenticated:
-            ####  Verificar se o user tem cart anonimo
             if request.session.get('carrinho', False):
-                ###   Chamar a função de join carts
                 self.carrinho, anonimo = get_or_create_cart(request)
                 join_carts(self.carrinho, anonimo)
         return super().dispatch(request, *args, **kwargs)
@@ -50,6 +50,6 @@ def add_to_cart(request, **kwargs):
         Tests   - Se um usuário não tem um carrinho, deve criar automáticamente
                 - """
     pk = kwargs.get('pk', 0)
-    carrinho, id_carrinho_anono = get_or_create_cart(request)
+    carrinho, anonimo = get_or_create_cart(request)
     add_to_cart_func(pk, carrinho)
     return redirect(reverse_lazy('cart_page'))

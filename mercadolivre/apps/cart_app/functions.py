@@ -1,4 +1,5 @@
 from django.http import response
+from django.http.request import HttpRequest
 from apps.loja_app.models import ItensModel
 from apps.cart_app.models import CartItemModel, CartModel
 
@@ -41,8 +42,15 @@ def get_or_create_cart_old(request):
     return carrinho
 
 
+def get_cart_data(request: HttpRequest):
+    carrinho, anonimo = get_or_create_cart(request)
+    request.session['carrinho_user'] = carrinho.id
+    request.session['carrinho_anonimo'] = anonimo.id if isinstance(anonimo, CartModel) else None
+    print(request.session.get('carrinho_user'), request.session.get('carrinho_anonimo'))
+
 def get_or_create_cart(request):
     """Retorna o carrinho do user caso ele tenha ou cria um novo"""
+    print('get_or_create_cart')
     anonimo = request.session.get('carrinho', False)
     if request.user.is_authenticated:
         # Seleciona ou cria um carrinho pro user logado
@@ -60,6 +68,7 @@ def get_or_create_cart(request):
 
 
 def cria_carrinho(user=None):
+    print('cria_carrinho')
     return CartModel.objects.create(comprador=user)
 
 
@@ -68,14 +77,16 @@ def tranfere_itens_de_carrinho(origem: CartModel, destino: CartModel):
 
 
 def get_cart_items(request=None, carrinho=None):
+    print('get_cart_items')
     """Retorna Queryset de Cart Itens caso exista, ou []"""
     if request:
         carrinho = get_or_create_cart(request)[0]
     cart_item = carrinho.cart_item.get_queryset()
     return cart_item
 
-
+# nao junta todos os itens
 def join_carts(carrinho_user: CartModel, carrinho_anonimo: CartModel):
+    print('join_carts')
     carrinho_item_user = carrinho_user.cart_item.get_queryset()
     carrinho_anonimo = carrinho_anonimo.cart_item.get_queryset()
     for u in carrinho_item_user:
@@ -88,9 +99,11 @@ def join_carts(carrinho_user: CartModel, carrinho_anonimo: CartModel):
             elif a.id:
                 # Caso não exista o item no carrinho
                 carrinho_user.cart_item.add(a)
+        carrinho_anonimo.delete()
 
 
 def add_to_cart_func(loja_item_id: int, carrinho: CartModel, quantidade=1):
+    print('add_to_cart_func')
     carrinho_itens = get_cart_items(carrinho=carrinho)
     # Verifica se o item existe no carrinho
     loja_ids = []
@@ -99,7 +112,6 @@ def add_to_cart_func(loja_item_id: int, carrinho: CartModel, quantidade=1):
     try: item = loja_ids.index(loja_item_id)
     except ValueError: item = False
     if item:
-        # Caso exista:
         carrinho_itens[item].quantidade_compra += quantidade
         carrinho_itens[item].save()
     else:
