@@ -2,14 +2,12 @@ from django.views.generic import ListView
 from django.views.generic.edit import DeleteView
 from django.shortcuts import redirect
 from django.urls import reverse_lazy
-from django.http import HttpRequest
 from django.http.response import HttpResponseBase
 
 from apps.cart_app.functions import *
-from apps.cart_app.models import  CartItemModel, CartItemModel
 
 """
-Vincular com a tela de login, mesclar cart de user anonimo com cart do user que fez login
+Deletar carrinhos que não estão sendo usados mais
 """
 
 
@@ -20,19 +18,15 @@ class CartView(ListView):
 
     def dispatch(self, request: HttpRequest, *args: any, **kwargs: any) -> HttpResponseBase:
         """Chama join carts caso o user esteja logado e tenha cart anonimo"""
-        # get_cart_data(request)
-        self.carrinho = False
-        if request.user.is_authenticated:
-            if request.session.get('carrinho', False):
-                self.carrinho, anonimo = get_or_create_cart(request)
-                join_carts(self.carrinho, anonimo)
+        self.carrinho, self.anonimo = ajusta_carrinho(request)
         return super().dispatch(request, *args, **kwargs)
 
     def get_context_data(self, **kwargs: any): # adicionar total da compra
-        if not self.carrinho:
-            cart_itens = get_cart_items(self.request)
-        else:
-            cart_itens = get_cart_items(carrinho=self.carrinho)
+        cart_itens = None
+        if self.request.user.is_authenticated and self.carrinho:
+                cart_itens = get_cart_items(carrinho=self.carrinho)
+        elif self.anonimo:
+                cart_itens = get_cart_items(carrinho=self.anonimo)
         return {'itens': cart_itens}
 
 
@@ -45,11 +39,7 @@ class RemoveFromCart(DeleteView):
 
 
 def add_to_cart(request, **kwargs):
-    """Falta:   - verificar se quantidade a adicionar no carrinho é maior que a quantidade em estoque do produto
-                - verificar se tem dois cart_item com loja_items iguais e unificar
-        Tests   - Se um usuário não tem um carrinho, deve criar automáticamente
-                - """
     pk = kwargs.get('pk', 0)
     carrinho, anonimo = get_or_create_cart(request)
-    add_to_cart_func(pk, carrinho)
+    add_to_cart_func(pk, carrinho if carrinho else anonimo)
     return redirect(reverse_lazy('cart_page'))

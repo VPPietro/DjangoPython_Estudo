@@ -13,7 +13,6 @@ from django.views.generic.detail import DetailView
 from apps.user_app.forms import AlterUserForm, SignUpForm, LoginForm
 from apps.user_app.models import UserModel
 from apps.cart_app.models import CartModel
-from apps.cart_app.functions import join_carts
 
 decorator_login = [
     login_required(login_url='/user/login')
