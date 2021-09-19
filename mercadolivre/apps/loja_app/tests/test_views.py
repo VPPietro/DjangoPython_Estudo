@@ -121,6 +121,10 @@ class LojaUpdateTest(TestCase):
         self.assertEqual(self.item.valor, 123456)
         self.assertEqual(self.item.vendedor, self.vendedor1)
 
+    def test_vendedor_atualiza_imagem_do_item(self):
+        """Verifica se o vendedor consegue atualizar imagem do produto"""
+        pass
+
 
 class LojaDeleteTest(TestCase):
 
