@@ -13,11 +13,11 @@
                 <h5 class="card-title">Atualizar Item #{{item.id}}</h5>
             </div>
             <div class="card-body">
-                <form method="post">
+                <form method="post" enctype="multipart/form-data">
                     {% csrf_token %}
                     <div class="text-center">
                     <label for="foto_do_item">Imagem atual do produto:</label>
-                    <img id="foto_do_item" src="{{foto}}" width="300" class="border border-dark border-2 rounded">
+                    <img id="foto_do_item" src="/media/{{item.imagem}}" width="300" class="border border-dark border-2 rounded">
                     </div>
                     {{form.as_p}}
                     {% if messages %}

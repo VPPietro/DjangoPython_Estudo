@@ -4,7 +4,7 @@ from django.shortcuts import redirect
 from django.urls import reverse_lazy
 from django.http.response import HttpResponseBase
 
-from apps.cart_app.functions import *
+from apps.cart_app.views_functions import *
 
 """
 Deletar carrinhos que não estão sendo usados mais
