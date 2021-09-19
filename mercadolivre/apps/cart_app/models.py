@@ -1,7 +1,5 @@
-from enum import auto
 from django.db import models
 from django.db.models.deletion import CASCADE
-from datetime import date, datetime
 
 from apps.loja_app.models import ItensModel
 from apps.user_app.models import UserModel

@@ -23,11 +23,11 @@ def get_or_create_cart(request: HttpRequest) -> tuple:
     return carrinho, anonimo
 
 
-def get_cart_items(carrinho=None) -> QuerySet:
+def get_cart_items(carrinho: CartModel) -> QuerySet:
     """Retorna Queryset de Cart Itens caso exista, ou []"""
-    # Caso não precise de select no banco novamente:
+    # Caso não precise de select no banco (carrinho está com select_related):
     try: cart_item = carrinho.cart_item.all()
-    # Caso precise faz o select
+    # Caso precise, faz o select
     except: cart_item = carrinho.cart_item.get_queryset()
     return cart_item
 
@@ -63,7 +63,7 @@ def join_carts(carrinho: CartModel, anonimo: CartModel):
                     u.quantidade_compra += a.quantidade_compra
                     u.save()
                     a.delete()
-                if a.id:
+                elif a.id:
                     carrinho.cart_item.add(a)
     elif anonimo_itens:
         for a in anonimo_itens:
