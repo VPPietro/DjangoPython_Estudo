@@ -6,10 +6,6 @@ from django.http.response import HttpResponseBase
 
 from apps.cart_app.views_functions import *
 
-"""
-Deletar carrinhos que não estão sendo usados mais
-"""
-
 
 class CartView(ListView):
     model = CartModel
