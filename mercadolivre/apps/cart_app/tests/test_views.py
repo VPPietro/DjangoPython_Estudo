@@ -1,17 +1,46 @@
-from django.test import TestCase
+from django.test import TestCase, RequestFactory
+from django.urls import reverse_lazy
+
+from apps.loja_app.models import ItensModel
+from apps.user_app.models import UserModel
+from apps.cart_app.models import CartModel, CartItemModel
+from apps.cart_app.views import CartView
 
 
 class CartViewTest(TestCase):
     def setUp(self) -> None:
-        return super().setUp()
+        self.factory = RequestFactory()
+        self.user = UserModel.objects.create(
+            email = 'user@gmail.com',
+            username = 'UserCarrinho',
+            first_name = 'User',
+            last_name = 'Carrinho',
+            password = 'toor',
+            is_seller = True,)
+        self.item_user = ItensModel.objects.create(
+            nome = 'ItemTest1',
+            descricao = 'este e o primeiro item',
+            valor = 250,
+            quantidade = 20,
+            vendedor = self.user)
+        self.item_carrinho_user = CartItemModel.objects.create(
+            loja_item = self.item_user,
+            quantidade_compra = 2)
+        self.carrinho_do_user = CartModel.objects.create(
+            comprador = self.user)
 
-    def t_user_logado_sem_cart_anonimo(self):
+    def test_user_logado_sem_cart_anonimo(self):
         """Verifica se quando acessado a página de carrinho, sem carrinho anonimo,
         o usuario logado recebe o seu carrinho do db"""
         # seta o user que já tem um carrinho para a request
+        request = self.factory.get(reverse_lazy('cart_page'))
+        request.session = self.client.session
+        request.user = self.user
+        self.assertTrue(request.user.is_authenticated)
         # manda a request get para CartView
+        retorno = CartView.as_view()(request)
         # verifica se o carrinho que já existia foi mostrado
-        pass
+        print(retorno.headers)
 
     def t_user_logado_com_cart_anonimo(self):
         """Verifica se quando acessado a página de carrinho, com carrinho anonimo,

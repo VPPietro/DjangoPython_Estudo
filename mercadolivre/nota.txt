@@ -3,6 +3,3 @@ https://django-shop.readthedocs.io/en/latest/index.html     -blog django-shop
 https://github.com/awesto/django-shop/tree/13d9a77aff7eede74a5f363c1d540e005d88dbcd -github django-shop
 
 excelente referência e informações a respeito de eshop no django
-
-
-remover campo password do alter user form
