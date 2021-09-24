@@ -40,7 +40,7 @@ class CartViewTest(TestCase):
         # manda a request get para CartView
         retorno = CartView.as_view()(request)
         # verifica se o carrinho que já existia foi mostrado
-        print(retorno.headers)
+        print(retorno)
 
     def t_user_logado_com_cart_anonimo(self):
         """Verifica se quando acessado a página de carrinho, com carrinho anonimo,
