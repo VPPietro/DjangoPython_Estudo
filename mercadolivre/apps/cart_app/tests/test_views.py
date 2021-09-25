@@ -1,15 +1,27 @@
+from django.contrib.auth.models import AnonymousUser
+from django.core.handlers.wsgi import WSGIRequest
+from django.http import request
+from django.http.response import Http404
 from django.test import TestCase, RequestFactory
 from django.urls import reverse_lazy
 
 from apps.loja_app.models import ItensModel
 from apps.user_app.models import UserModel
 from apps.cart_app.models import CartModel, CartItemModel
-from apps.cart_app.views import CartView
+from apps.cart_app.views import CartView, RemoveFromCart, add_to_cart
 
 
-class CartViewTest(TestCase):
-    def setUp(self) -> None:
-        self.factory = RequestFactory()
+def set_request(self, url, user=None, post=False) -> WSGIRequest:
+    """Retorna uma request get caso GET seja True se não uma request POST"""
+    factory = RequestFactory()
+    request = factory.post(url) if post else factory.get(url)
+    request.session = self.client.session
+    request.user = user if user else AnonymousUser()
+    return request
+
+
+def setup_std(self, user=False, anonimo=False, user_sem_carrinho=False):
+    if user:
         self.user = UserModel.objects.create(
             email = 'user@gmail.com',
             username = 'UserCarrinho',
@@ -25,99 +37,145 @@ class CartViewTest(TestCase):
             vendedor = self.user)
         self.item_carrinho_user = CartItemModel.objects.create(
             loja_item = self.item_user,
-            quantidade_compra = 2)
+            quantidade_compra = 333)
         self.carrinho_do_user = CartModel.objects.create(
             comprador = self.user)
+        self.carrinho_do_user.cart_item.add(self.item_carrinho_user)
+    self.user_sem_carrinho = UserModel.objects.create(
+            email = 'usersemcarrinho@gmail.com',
+            username = 'UserSemCarrinho',
+            first_name = 'User',
+            last_name = 'Sem Carrinho',
+            password = 'toor',
+            is_seller = True,) if user_sem_carrinho else None
+    if anonimo:
+        self.item_carrinho_anonimo = CartItemModel.objects.create(
+            loja_item = self.item_user,
+            quantidade_compra = 666)
+        self.carrinho_anonimo = CartModel.objects.create()
+        self.carrinho_anonimo.cart_item.add(self.item_carrinho_anonimo)
+
+
+class CartViewTest(TestCase):
+    def setUp(self) -> None:
+        setup_std(self, user=True, anonimo=True, user_sem_carrinho=True)
 
     def test_user_logado_sem_cart_anonimo(self):
         """Verifica se quando acessado a página de carrinho, sem carrinho anonimo,
         o usuario logado recebe o seu carrinho do db"""
         # seta o user que já tem um carrinho para a request
-        request = self.factory.get(reverse_lazy('cart_page'))
-        request.session = self.client.session
-        request.user = self.user
+        request = set_request(self, url=reverse_lazy('cart_page'), user=self.user)
         self.assertTrue(request.user.is_authenticated)
         # manda a request get para CartView
         retorno = CartView.as_view()(request)
         # verifica se o carrinho que já existia foi mostrado
-        print(retorno)
+        obj_cartitemmodel_retorno = retorno.context_data['itens'][0]
+        self.assertEqual(obj_cartitemmodel_retorno.id, self.item_carrinho_user.id)
+        self.assertEqual(obj_cartitemmodel_retorno.quantidade_compra, 333)
 
-    def t_user_logado_com_cart_anonimo(self):
+    def test_user_logado_com_cart_anonimo(self):
         """Verifica se quando acessado a página de carrinho, com carrinho anonimo,
         o usuário logado recebe seu carrinho unificado com o anonimo"""
         # seta user que já tem um carrinho para a request
-        # seta um carrinho anonimo para a request em request.session['anonimo']
+        request = set_request(self, reverse_lazy('cart_page'), user=self.user)
+        # seta um carrinho anonimo para a request
+        request.session['anonimo'] = self.carrinho_anonimo.id
         # manda a request para CartView
-        # verifica se os itens originais do user foi acrescido dos itens do carrinho anonimo
-        pass
+        retorno = CartView.as_view()(request)
+        obj_cartitemmodel_retorno = retorno.context_data['itens']
+        # verifica se o carrinho retornado é do user
+        self.assertTrue(CartModel.objects.filter(cart_item=obj_cartitemmodel_retorno[0].id))
+        # verifica se os itens originais do user foram acrescidos dos itens do carrinho anonimo
+        self.assertEqual(obj_cartitemmodel_retorno[0].quantidade_compra,
+            self.item_carrinho_anonimo.quantidade_compra + self.item_carrinho_user.quantidade_compra)
+        # verifica se o carrinho anonimo foi removido da db
+        carrinho_anonimo_db = CartModel.objects.filter(id=self.carrinho_anonimo.id)
+        self.assertFalse(carrinho_anonimo_db)
 
-    def t_user_logado_sem_nenhum_carrinho(self):
+    def test_user_logado_sem_nenhum_carrinho(self):
         """Verifica se quando um novo usuario loga no site e acessa página de carrinho,
-        se é criado um novo cart"""
+        é criado um novo cart"""
         # seta um user sem carrinho para a request
+        request = set_request(self, reverse_lazy('cart_page'), user=self.user_sem_carrinho)
         # manda a request para CartView
+        CartView.as_view()(request)
+        novo_carrinho = CartModel.objects.filter(comprador=self.user_sem_carrinho.id)
         # verifica se foi criado um carrinho para o user
-        pass
-
-    def t_verifica_se_tem_itens_duplicados(self):
-        """Verifica se ao juntar carrinho de user e anonimo não fica item duplicado
-        no carrinho do user"""
-        # seta um carrinho anonimo para a request com um item x
-        # seta um user para a request
-        # seta um carrinho para o user com o mesmo item x
-        # manda um get para CartView
-        # verifica se o item não duplicou e aumentou a quantidade
-        pass
+        self.assertTrue(novo_carrinho)
 
 
 class RemoveFromCartTest(TestCase):
     def setUp(self) -> None:
-        return super().setUp()
+        setup_std(self, user=True, user_sem_carrinho=True)
+        self.request = set_request(self, 'cart/remove_from_cart', self.user)
 
-    def t_exclui_item_do_carrinho(self):
+    def test_exclui_item_do_carrinho(self):
         """Verifica se ao mandar a request com a pk do produto do carrinho
         o item é excluido do carrinho"""
         # manda uma request get (a view esta configurada para dar post ao receber get) para RemoveFromCart
+        RemoveFromCart.as_view()(self.request, pk=self.item_carrinho_user.id)
+        retorno = CartView.as_view()(self.request)
         # verifica se o item foi excluido do carrinho
-        pass
+        self.assertFalse(retorno.context_data['itens'])
 
-    def t_tenta_excluir_item_que_nao_tem_no_carrinho(self):
+    def test_tenta_excluir_item_que_nao_tem_no_carrinho(self):
         """Verifica se ao mandar uma request com a pk incorreta de um CartItem inexistente
         retorna um 404"""
         # manda uma request get para RemoveFromCart
-        # verifica se é retornado um 404
-        pass
+        try: RemoveFromCart.as_view()(self.request, pk=999)
+        except Http404: self.assertTrue(True)
+        except: self.assertTrue(False)
 
 
 class add_to_cartTest(TestCase):
     def setUp(self) -> None:
-        return super().setUp()
+        setup_std(self, user=True, user_sem_carrinho=True)
+        self.request_anonimo = set_request(self, 'cart/add_to_cart/')
 
-    def t_adiciona_item_sem_ter_carrinho_anonimo(self):
+    def test_adiciona_item_sem_ter_carrinho_anonimo(self):
         """Verifica se um user anonimo consegue adicionar item sem ter criado um carrinho ainda
         (deve ser criado um automaticamente)"""
         # com user anonimo e sem carrinho, manda uma request para add_to_cart com o pk do item à adicionar
+        add_to_cart(self.request_anonimo, pk=self.item_user.id)
+        cart_anonimo = self.request_anonimo.session.get('anonimo', False)
+        if cart_anonimo: cart_anonimo = CartModel.objects.get(id=cart_anonimo)
         # verifica se foi criado um cart anonimo
+        self.assertTrue(cart_anonimo)
         # verifica se foi adicionado o item para o cart anonimo
-        pass
+        self.assertTrue(cart_anonimo.cart_item.all())
 
-    def t_adiciona_item_ja_tendo_carrinho_anonimo(self):
+    def test_adiciona_item_ja_tendo_carrinho_anonimo(self):
         """Verifica se um user anonimo que já possui carrinho anonimo consegue adicionar
         itens no seu carrinho"""
+        self.request_anonimo.session['anonimo'] = self.carrinho_do_user.id
         # com user anonimo e com carrinho, manda uma request para add_to_cart com o pk do item à adicionar
+        add_to_cart(self.request_anonimo, pk=self.item_user.id)
         # verifica se foi adicionado o item para o cart anonimo
-        pass
+        cart_anonimo = CartModel.objects.get(id=self.request_anonimo.session.get('anonimo'))
+        self.assertEqual(cart_anonimo.cart_item.all()[0].quantidade_compra,
+            self.item_carrinho_user.quantidade_compra + 1)
 
-    def t_adiciona_item_sem_ter_carrinho_user(self):
+    def test_adiciona_item_sem_ter_carrinho_user(self):
         """Verifica se um user logado que ainda não possui carrinho, consegue adicionar item
         e criar carrinho automaticamente"""
+        request_user = set_request(self, 'cart/add_to_cart/', user=self.user_sem_carrinho)
         # com um user logado e sem carrinho, manda uma request para add_to_cart com o pk do item à adicionar
+        add_to_cart(request_user, pk=self.item_user.id)
+        cart_user = CartModel.objects.filter(comprador=self.user_sem_carrinho.id)
         # verifica se foi criado um carrinho para o user
+        self.assertTrue(cart_user)
         # verifica se o item foi adicionado para o carrinho do user
-        pass
+        self.assertTrue(cart_user[0].cart_item.all())
 
-    def t_adiciona_item_ja_tendo_carrinho_user(self):
+    def test_adiciona_item_ja_tendo_carrinho_user(self):
         """Verifica se um user logado que já possui carrinho consegue adicionar item ao cart"""
+        request_user = set_request(self, 'cart/add_to_cart/', user=self.user)
         # com um user logado e com carrinho, manda uma request para add_to_cart com o pk do item à adicionar
+        add_to_cart(request_user, pk=self.item_user.id)
         # verifica se foi adicionado no carrinho do user
-        pass
+        self.assertEqual(self.carrinho_do_user.cart_item.all()[0].quantidade_compra,
+            self.item_carrinho_user.quantidade_compra + 1)
+
+
+
+"""Remover criacao de users de setup, já que nem todos os users são usados em todos os testes"""
