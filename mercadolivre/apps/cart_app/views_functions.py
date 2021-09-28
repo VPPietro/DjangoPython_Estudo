@@ -69,6 +69,7 @@ def join_carts(carrinho: CartModel, anonimo: CartModel):
         for a in anonimo_itens:
             carrinho.cart_item.add(a)
             carrinho.save()
+            a.delete()
 
 
 def add_to_cart_func(loja_item_id: int, carrinho: CartModel, quantidade=1):

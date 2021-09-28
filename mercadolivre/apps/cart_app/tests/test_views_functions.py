@@ -114,47 +114,53 @@ class ajusta_carrinhoTest(TestCase):
         self.assertEqual(qnt_cart_retorno, qnt_cart_user + qnt_cart_anonimo)
 
 
-
 class cria_carrinhoTest(TestCase):
-    def setUp(self) -> None:
-        return super().setUp()
 
-    def t_cria_carrinho_anonimo(self):
+    def tes_cria_carrinho_anonimo(self):
         """Cria um carrinho sem um user, ou seja, anonimo"""
         # chama a função sem nenhum valor informado
+        retorno = cria_carrinho()
         # verifica se é retornado um CartModel sem usuário
-        pass
+        self.assertTrue(isinstance(retorno, CartModel))
 
-    def t_cria_carrinho_com_user(self):
+    def tes_cria_carrinho_com_user(self):
         """Cria um carrinho com um user"""
+        setup_std(self, user_sem_carrinho=True)
         # chama a função informando um user
+        retorno = cria_carrinho(user=self.user_sem_carrinho)
         # verifica se é retornado um CartModel com o usuário informado
-        pass
+        self.assertTrue(isinstance(retorno, CartModel))
 
 
 class deleta_carrinhoTest(TestCase):
     def setUp(self) -> None:
-        return super().setUp()
+        setup_std(self, user=True)
 
-    def t_deleta_carrinho(self):
+    def tes_deleta_carrinho(self):
         """Verifica se a função deleta um carrinho"""
         # manda um carrinho para a função
+        deleta_carrinho(self.carrinho_do_user)
         # verifica se o carrinho foi deletado
-        pass
+        self.assertFalse(self.carrinho_do_user.id)
 
 
 class join_cartsTest(TestCase):
     def setUp(self) -> None:
-        return super().setUp()
+        setup_std(self, user=True,anonimo=True)
 
-    def t_manda_carrinho_vazio_anonimo_com_item(self):
+    def test_manda_carrinho_user_vazio_e_anonimo_com_item(self):
         """Verifica se será adicionado os itens do cart anonimo para o cart do user"""
         # manda um carrinho vazio e um carrinho anonimo com item para a função
+        carrinho_user = CartModel.objects.create()
+        print(carrinho_user, self.carrinho_anonimo)
+        join_carts(carrinho_user, self.carrinho_anonimo)
         # verifica se o carrinho anonimo ficou vazio (talvez precise definir a.delete() nos elifs (linhas 66 e 68))
+        self.assertFalse(self.carrinho_anonimo.cart_item.all())
         # verifica se o carrinho user esta com os itens
-        pass
+        carrinho_user = CartModel.objects.select_related().get(id=carrinho_user.id)
+        print(carrinho_user.cart_item.all()) # não tem itens ???
 
-    def t_manda_carrinho_com_item_anonimo_vazio(self):
+    def t_manda_carrinho_do_user_com_item_e_anonimo_vazio(self):
         """A função não deve fazer nada, pois não é necessário alterar"""
         # manda um carrinho com itens e um carrinho anonimo vazio para a função
         # verifica se nenhuma alteração foi feita
