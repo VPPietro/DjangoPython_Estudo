@@ -1,83 +1,117 @@
 from django.test import TestCase
 
+from apps.cart_app.tests.t_functions import *
+from apps.cart_app.views_functions import *
+
 
 class get_or_create_cartTest(TestCase):
     def setUp(self) -> None:
-        return super().setUp()
+        setup_std(self, user=True, anonimo=True)
 
-    def t_request_com_somente_cart_anonimo(self):
+    def tes_request_com_somente_cart_anonimo(self):
         """Verifica se a função retorna False e obj cart_anonimo"""
         # define uma request somente com cart anonimo
+        request = set_request(self, reverse_lazy('cart_page'))
+        request.session['anonimo'] = self.carrinho_anonimo.id
         # manda para a função
+        retorno = get_or_create_cart(request)
         # verifica se retorna False, obj cart_anonimo
-        pass
+        self.assertEqual(not retorno[0], isinstance(retorno[1], CartModel))
 
-    def t_request_com_somente_cart_user(self):
+    def tes_request_com_somente_cart_user(self):
         """Verifica se a função retorna obj cart_user e False"""
         # define uma request somente com cart user
+        request = set_request(self, reverse_lazy('cart_page'), user=self.user)
         # manda para a função
+        retorno = get_or_create_cart(request)
         # verifica se retorna obj cart_user e False
-        pass
+        self.assertEqual(isinstance(retorno[0], CartModel), not retorno[1])
 
-    def t_request_com_os_dois_carts(self):
+    def tes_request_com_os_dois_carts(self):
         """Verifica se a função retorna obj cart_user e obj cart_anonimo"""
         # define uma request com os dois carts
+        request = set_request(self, reverse_lazy('cart_page'), user=self.user)
+        request.session['anonimo'] = self.carrinho_anonimo.id
         # manda para a função
+        retorno = get_or_create_cart(request)
         # verifica se retorna obj cart_user e obj cart_anonimo
-        pass
+        self.assertEqual(isinstance(retorno[0], CartModel), isinstance(retorno[1], CartModel))
 
 
 class get_cart_itemsTest(TestCase):
-    def setUp(self) -> None:
-        return super().setUp()
 
-    def t_manda_carrinho_com_itens(self):
+    def tes_manda_carrinho_com_itens(self):
         """Verifica se ao mandar carrinho com itens, é retornado um queryset
         com cart_items"""
         # cria um carrinho com itens
+        setup_std(self, user=True)
         # manda o carrinho para a função
+        retorno = get_cart_items(self.carrinho_do_user)
         # verifica se retornou queryset com os cart_items
-        pass
+        self.assertTrue(isinstance(retorno, QuerySet))
+        # verifica se retornou o item dentro do queryset(queryset vazio retorna False)
+        self.assertTrue(retorno)
 
-    def t_manda_carrinho_sem_itens(self):
+    def tes_manda_carrinho_sem_itens(self):
         """Verifica se ao mandar carrinho sem itens, é retornado um queryset vazio"""
         # cria um carrinho sem itens
+        carrinho = CartModel.objects.create()
         # manda o carrinho para a função
+        retorno = get_cart_items(carrinho)
         # verifica se retornou queryset vazio
-        pass
+        self.assertFalse(retorno)
 
 
 class ajusta_carrinhoTest(TestCase):
     def setUp(self) -> None:
-        return super().setUp()
+        setup_std(self, user=True, anonimo=True)
 
-    def t_user_anonimo_com_carrinho(self):
+    def tes_user_anonimo_com_carrinho(self):
         """Verifica se a função retorna o carrinho do user anonimo sem alterações"""
-        # define uma request com user anonimo e carrinho
+        # define uma request com user anonimo com carrinho
+        request = set_request(self, '')
+        request.session['anonimo'] = self.carrinho_anonimo.id
         # manda para a função
-        # verifica se retorna False para cart anonimo
-        pass
+        retorno = ajusta_carrinho(request)
+        # verifica se retorna (False, carrinho)
+        self.assertEqual(not retorno[0], isinstance(retorno[1], CartModel))
+        # verifica se carrinho anonimo é retornado sem alterações
+        self.assertEqual(retorno[1].cart_item.all()[0], self.carrinho_anonimo.cart_item.all()[0])
+        self.assertEqual(retorno[1].cart_item.all()[0].quantidade_compra, self.carrinho_anonimo.cart_item.all()[0].quantidade_compra)
 
-    def t_user_anonimo_sem_carrinho(self):
+    def tes_user_anonimo_sem_carrinho(self):
         """Verifica se a função retorna um novo carrinho para o user anonimo"""
         # define uma request com user anonimo e sem carrinho
+        request = set_request(self, '')
         # manda para a função
+        retorno = ajusta_carrinho(request)
         # verifica se retorna um novo carrinho para o user anonimo
-        pass
+        self.assertTrue(isinstance(retorno[1], CartModel))
 
-    def t_user_logado_sem_carrinho_anonimo(self):
+    def tes_user_logado_sem_carrinho_anonimo(self):
         """Verifica se a função retorna o carrinho do user sem alterações"""
         # define uma request com user logado, sem carrinho anonimo
+        request = set_request(self, '', user=self.user)
         # manda para a função
+        retorno = ajusta_carrinho(request)
         # verifica se retorna o cart do user sem alterações
-        pass
+        self.assertEqual(retorno[0].cart_item.all()[0], self.carrinho_do_user.cart_item.all()[0])
+        self.assertEqual(retorno[0].cart_item.all()[0].quantidade_compra, self.carrinho_do_user.cart_item.all()[0].quantidade_compra)
 
-    def t_user_logado_com_carrinho_anonimo(self):
+    def tes_user_logado_com_carrinho_anonimo(self):
         """Verifica se a função retorna o carrinho do user junto com os itens do carrinho anonimo"""
         # define uma request com user logado, com carrinho anonimo
+        request = set_request(self, '', user=self.user)
+        request.session['anonimo'] = self.carrinho_anonimo.id
+        qnt_cart_user = self.carrinho_do_user.cart_item.all()[0].quantidade_compra
+        qnt_cart_anonimo = self.carrinho_anonimo.cart_item.all()[0].quantidade_compra
         # manda para a função
-        # verifica se retorna o cart do user junto com os itens do carrinho anonimo
-        pass
+        retorno = ajusta_carrinho(request)[0]
+        # verifica se retorna o cart do user
+        self.assertTrue(isinstance(retorno, CartModel))
+        # verifica se os carrinhos são juntados
+        qnt_cart_retorno = retorno.cart_item.all()[0].quantidade_compra
+        self.assertEqual(qnt_cart_retorno, qnt_cart_user + qnt_cart_anonimo)
 
 
 
