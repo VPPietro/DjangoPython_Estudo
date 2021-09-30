@@ -32,6 +32,12 @@ def setup_std(self, user=False, anonimo=False, user_sem_carrinho=False):
             valor = 250,
             quantidade = 20,
             vendedor = self.user)
+        self.item_user2 = ItensModel.objects.create(
+            nome = 'ItemTest2',
+            descricao = 'este e o segundo item',
+            valor = 300,
+            quantidade = 10,
+            vendedor = self.user)
         self.item_carrinho_user = CartItemModel.objects.create(
             loja_item = self.item_user,
             quantidade_compra = 333)
@@ -49,5 +55,8 @@ def setup_std(self, user=False, anonimo=False, user_sem_carrinho=False):
         self.item_carrinho_anonimo = CartItemModel.objects.create(
             loja_item = self.item_user,
             quantidade_compra = 666)
+        self.item_carrinho_anonimo2 = CartItemModel.objects.create(
+            loja_item = self.item_user2,
+            quantidade_compra = 22)
         self.carrinho_anonimo = CartModel.objects.create()
         self.carrinho_anonimo.cart_item.add(self.item_carrinho_anonimo)
