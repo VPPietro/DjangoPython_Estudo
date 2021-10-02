@@ -32,8 +32,8 @@ class CartModel(models.Model):
 class CartLink(models.Model):
     """Por padrão a tabela que o django cria automaticamente para ManyToMany vem com 'on_delete=RESTRICT',
     então foi definido a tabela manualmente com CASCADE"""
-    cartmodel_id = models.ForeignKey(CartModel, on_delete=CASCADE)
-    cartitem_id = models.ForeignKey(CartItemModel, on_delete=CASCADE)
+    cartmodel = models.ForeignKey(CartModel, on_delete=CASCADE)
+    cartitem = models.ForeignKey(CartItemModel, on_delete=CASCADE)
 
     class Meta:
         db_table = 'cart_model_has_cart_item'

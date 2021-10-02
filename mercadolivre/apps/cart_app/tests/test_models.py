@@ -1,31 +1,39 @@
 from django.test import TestCase
 
+from apps.cart_app.models import CartModel, CartItemModel
+from apps.loja_app.models import ItensModel
+from apps.user_app.models import UserModel
+
 
 class CartModelTest(TestCase):
-    def setUp(self) -> None:
-        return super().setUp()
 
-    def t_cria_cart_model(self):
+    def test_cria_cart_model(self):
         """Verifica se um cart model é criado corretamente com os padrões certos"""
-        # cria um cart model
-        # verifica dados
-        pass
-
-    def t_ao_deletar_cart_model_deleta_cart_items(self):
-        """Verifica se ao deletar o CartModel o CASCADE deleta as informações
-        do carrinho do db"""
-        # cria um carrinho com cart items
-        # deleta carrinho
-        # verifica se tanto o carrinho quanto os cart items foi deletado
-        pass
+        carrinho = CartModel.objects.create()
+        self.assertTrue(isinstance(carrinho, CartModel))
 
 
 class CartItemTest(TestCase):
     def setUp(self) -> None:
         return super().setUp()
 
-    def t_cria_um_cart_item_model(self):
+    def test_cria_um_cart_item_model(self):
         """Verifica se um cart item model é criado corretamente com os padrões certos"""
         # cria um cart item model
+        user = UserModel.objects.create(
+            email = 'pietro@teste.com',
+            username = 'PietroPV',
+            first_name = 'pietro',
+            last_name = 'paraventi',
+            is_seller = True)
+        item_loja = ItensModel.objects.create(
+            nome = 'item loja',
+            descricao = 'primeiro item da loja',
+            valor = 100,
+            quantidade = 10,
+            vendedor = user)
+        item_carrinho = CartItemModel.objects.create(
+            loja_item = item_loja,
+            quantidade_compra = 1)
         # verifica dados
-        pass
+        self.assertTrue(isinstance(item_carrinho, CartItemModel))
