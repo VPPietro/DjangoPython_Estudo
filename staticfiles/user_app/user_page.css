@@ -1,0 +1,30 @@
+h1{
+    text-align: center;
+}
+#userinfolist{
+    list-style-type: none;
+    width: fit-content;
+    height: auto;
+    padding: 0;
+    margin: auto;
+    margin-top: 5%;
+    margin-bottom: 15px;
+    text-align: left;
+    background-color: rgb(255, 255, 255);
+    border-radius: 10px;
+    border: solid rgba(77, 77, 255, 0.164);
+    box-shadow: rgba(0, 0, 0, 0.596);
+}
+
+#userinfolist li{
+    width: fit-content;
+    padding: 10px;
+    margin: 10px 0;
+    font-size: 15px;
+    line-height: 200%;
+    margin-top: 10px;
+    margin-left: 8px;
+    border: 2px solid rgb(221, 221, 221);
+    box-shadow: 0 0 15px 4px rgba(0,0,0,0.06);
+    border-radius: 10px;
+}
