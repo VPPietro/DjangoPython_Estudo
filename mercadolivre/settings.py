@@ -82,7 +82,7 @@ WSGI_APPLICATION = 'mercadolivre.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite',
+        'ENGINE': 'django.db.backends.sqlite3',
         'NAME': 'standard_db',
     }
 }
