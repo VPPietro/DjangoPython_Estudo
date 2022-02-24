@@ -25,9 +25,9 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-f8+n3xab*&tj-2^)5$)$ftt7d^*6(+fbuau)(+lf1wnmoguxg%'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
-ALLOWED_HOSTS = ['localhost', '127.0.0.1']
+ALLOWED_HOSTS = ['*']
 
 # Application definition
 
@@ -82,11 +82,8 @@ WSGI_APPLICATION = 'mercadolivre.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'ml_db',
-        'USER': 'eshopdbuser',
-        'PASSWORD': 'eshoppsw',
-        'HOST': 'mysqldb',
+        'ENGINE': 'django.db.backends.sqlite',
+        'NAME': 'standard_db',
     }
 }
 
